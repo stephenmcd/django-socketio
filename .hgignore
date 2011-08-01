@@ -1,0 +1,8 @@
+syntax: glob
+*.pyc
+*.pyo
+*.db
+*.rdb
+.DS_Store
+.coverage
+local_settings.py
