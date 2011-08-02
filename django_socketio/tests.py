@@ -6,44 +6,26 @@ from django.test import Client
 from django.test import TestCase
 
 
-class MockSocketIoClient(Client):
+class MockSocketIo(object):
     """
-    Mocks a socket.io request for testing.
+    Mock socket.io object for testing.
     """
-    def request(self, **request):
+    def on_connect(self):
+        return True
+    def recv(self):
+        return ""
+    def connected(self):
+        return False
 
-        class MockSocketIo(object):
-
-            def on_connect(self):
-                return True
-            def recv(self):
-                return ""
-            def connected(self):
-                return False
-
-        environ = {
-            'HTTP_COOKIE': self.cookies,
-            'PATH_INFO': '/',
-            'QUERY_STRING': '',
-            'REQUEST_METHOD': 'GET',
-            'SCRIPT_NAME': '',
-            'SERVER_NAME': 'testserver',
-            'SERVER_PORT': 80,
-            'SERVER_PROTOCOL': 'HTTP/1.1',
-            'socketio': MockSocketIo()
-        }
-
-        environ.update(self.defaults)
-        environ.update(request)
-        request = WSGIRequest(environ)
-        handler = BaseHandler()
-        handler.load_middleware()
-        for middleware_method in handler._request_middleware:
-            if middleware_method(request):
-                raise Exception("Couldn't create request object - "
-                                "request middleware returned a response")
-
-        return request
+class SocketIoClient(Client):
+    """
+    Test client that adds a mocked socketio object to the
+    environment dictionary.
+    """
+    def _base_environ(self, **request):
+        environ = super(Client, self)._base_environ(**request)
+        environ["socketio"] = MockSocketIo()
+        return environ
 
 class Tests(TestCase):
     """
