@@ -2,6 +2,6 @@
 from django.conf.urls.defaults import patterns, url
 
 
-urlpatterns = patterns("djangosocketio.views",
+urlpatterns = patterns("django_socketio.views",
     url("^socket\.io", "socketio", name="socketio"),
 )
