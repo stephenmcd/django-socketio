@@ -1,8 +1,9 @@
 
+from django.dispatch import receiver
 from django_socketio import signals
 
 
-def connect(request, socket, **kwargs):
+@receiver(signals.on_connect)
+def connect(request=None, socket=None, **kwargs):
     pass
 
-signals.on_connect.connect(connect)
