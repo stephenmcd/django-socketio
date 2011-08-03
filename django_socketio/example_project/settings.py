@@ -44,3 +44,4 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django_socketio',
 )
+
