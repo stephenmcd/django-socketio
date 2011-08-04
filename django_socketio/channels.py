@@ -60,6 +60,9 @@ class ChanneledSocketIOProtocol(object):
                     self._write(message, self.socket.handler.server.sessions[subscriber])
 
     def log(self, message):
+        """
+        Logging shortcut to the server's log method.
+        """
         self.socket.handler.server.log.write(message + "\n")
 
     def __getattr__(self, name):
