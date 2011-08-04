@@ -20,7 +20,8 @@ def socketio(request):
             message = socket.recv()
             if len(message) > 0:
                 now = datetime.now().replace(microsecond=0)
-                print '%s - - [%s] "Socket.IO message: %s"' % (request.META["REMOTE_ADDR"], now, message)
+                info = (request.META["REMOTE_ADDR"], now, message)
+                socket.log('%s - - [%s] "Socket.IO message: %s"' % info)
                 if message[0] == "__subscribe__" and len(message) == 2:
                     socket.subscribe(message[1])
                     signals.on_subscribe.send(sender=request, socket=socket, channel=message[1])
