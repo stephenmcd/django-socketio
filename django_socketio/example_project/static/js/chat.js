@@ -1,23 +1,23 @@
 $(function() {
 
-    var name;
+    var name, connected = false;
 
-    var timestamp = function() {
+    var addMessage = function(data) {
         var d = new Date();
         var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
         var pad = function(s) {return (s.length == 1 ? '0' : '') + s;}
-        return [pad(h), pad(m), pad(s)].join(':');
+        data.time = [pad(h), pad(m), pad(s)].join(':');
+        $('#message-template').tmpl(data).appendTo('#messages');
     };
 
     $('form').submit(function() {
         var value = $('#message').val();
         if (value) {
-            if (!name) {
+            if (!connected) {
                 name = value;
-                $('#submit').val('Send message');
-                socket.send({name: name, message: 'enters'});
+                socket.send({room: window.room, action: 'start', name: name});
             } else {
-                socket.send({name: name, message: value});
+                socket.send({room: window.room, action: 'message', message: value});
             }
         }
         $('#message').val('');
@@ -26,13 +26,27 @@ $(function() {
 
     var socket = new io.Socket();
     socket.connect();
-    socket.on('connect', function() {
-        socket.subscribe('blah');
-    });
 
     socket.on('message', function(data) {
-        data.time = timestamp();
-        $('#message-template').tmpl(data).appendTo('#messages');
+        switch (data.action) {
+            case 'in-use':
+                alert('Name is in use, please choose another');
+                break;
+            case 'start':
+                socket.subscribe(window.room);
+                connected = true;
+                $('#submit').val('Send message');
+                break;
+            case 'join':
+                addMessage(data);
+                break;
+            case 'leave':
+                addMessage(data);
+                break;
+            case 'message':
+                addMessage(data);
+                break;
+        }
     });
 
     $('#message').focus();

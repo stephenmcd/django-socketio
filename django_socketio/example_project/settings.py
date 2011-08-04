@@ -43,5 +43,5 @@ TEMPLATE_DIRS = full_path("templates")
 INSTALLED_APPS = (
     'django.contrib.sessions',
     'django_socketio',
+    'chat',
 )
-

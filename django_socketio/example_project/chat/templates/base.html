@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <title>{% block title %}Chat{% endblock %}</title>
+    <style>
+        body {margin:20px 0 0 0;}
+        form {position:absolute; bottom:0; background:#ccc; width:100%;
+              border-top:1px solid #999;}
+        input {border:1px solid #999; padding:10px; border-radius:5px;}
+        #message {width:600px; margin:20px 5px 20px 20px;}
+        #submit {cursor:pointer; width:150px;}
+        p {margin:10px 20px;}
+        p, input {font-size:16px; font-family:sans-serif;}
+    </style>
+    {% block extra_css %}{% endblock %}
+    {% block extra_js %}{% endblock %}
+
+</head>
+<body>
+    {% block main %}{% endblock %}
+</body>

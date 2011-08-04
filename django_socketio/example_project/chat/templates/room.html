@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{{ room }}{% endblock %}
+
+{% block extra_js %}
+<script src="{{ MEDIA_URL }}js/socket.io.js"></script>
+<script src="{{ MEDIA_URL }}js/channels.js"></script>
+<script src="{{ MEDIA_URL }}js/jquery.js"></script>
+<script src="{{ MEDIA_URL }}js/jquery.tmpl.js"></script>
+<script src="{{ MEDIA_URL }}js/chat.js"></script>
+<script>window.room = {{ room.id }};</script>
+{% endblock %}
+
+{% block main %}
+<div id="messages">
+    <script id="message-template" type="text/x-jquery-tmpl">
+	    <p>(${time}) ${user}: ${message}</p>
+    </script>
+</div>
+<form>
+    <input type="text" id="message" name="message">
+    <input type="submit" id="submit" value="Join">
+</form>
+{% endblock %}

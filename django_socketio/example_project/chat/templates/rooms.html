@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block main %}
+{% for room in rooms %}
+<div>
+    <h1><a href="{{ room.get_absolute_url }}">{{ room }}</a></h1>
+    <ul>
+        {% for user in room.users.all %}
+        <li>{{ user }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endfor %}
+{% endblock %}
