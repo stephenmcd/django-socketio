@@ -63,7 +63,8 @@ class ChanneledSocketIOProtocol(object):
         """
         Logging shortcut to the server's log method.
         """
-        self.socket.handler.server.log.write(message + "\n")
+        if hasattr(self.socket, "handler"):
+            self.socket.handler.server.log.write(message + "\n")
 
     def __getattr__(self, name):
         """
