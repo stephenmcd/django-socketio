@@ -1,4 +1,7 @@
 
+from datetime import datetime
+from traceback import print_exc
+
 from django.http import HttpResponse
 
 from django_socketio import signals
@@ -16,7 +19,8 @@ def socketio(request):
         while True:
             message = socket.recv()
             if len(message) > 0:
-                print "ya"
+                now = datetime.now().replace(microsecond=0)
+                print '%s - - [%s] "Socket.IO message: %s"' % (request.META["REMOTE_ADDR"], now, message)
                 if message[0] == "__subscribe__" and len(message) == 2:
                     socket.subscribe(message[1])
                     signals.on_subscribe.send(sender=request, socket=socket, channel=message[1])
@@ -30,7 +34,7 @@ def socketio(request):
                     signals.on_disconnect.send(sender=request, socket=socket)
                     break
     except Exception, e:
-        print e
+        print_exc()
         signals.on_error.send(sender=request, socket=socket, exception=e)
     signals.on_finish.send(sender=request, socket=socket)
     return HttpResponse("")

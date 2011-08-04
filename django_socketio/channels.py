@@ -27,7 +27,7 @@ class ChanneledSocketIOProtocol(object):
         """
         if channel in self.channels:
             return False
-        CHANNELS[channel].append(self.socket.sessionid)
+        CHANNELS[channel].append(self.socket.session.session_id)
         self.channels.append(channel)
         return True
 
@@ -38,7 +38,7 @@ class ChanneledSocketIOProtocol(object):
         if not subscribed, otherwise True.
         """
         try:
-            CHANNELS[channel].remove(self.socket.sessionid)
+            CHANNELS[channel].remove(self.socket.session.session_id)
             self.channels.remove(channel)
         except ValueError:
             return False
@@ -56,7 +56,7 @@ class ChanneledSocketIOProtocol(object):
             channels = self.channels
         for channel in channels:
             for subscriber in CHANNELS[channel]:
-                if subscriber != self.socket.sessionid:
+                if subscriber != self.socket.session.session_id:
                     self._write(message, self.socket.handler.server.sessions[subscriber])
 
     def __getattr__(self, name):
