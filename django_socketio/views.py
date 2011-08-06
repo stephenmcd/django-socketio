@@ -1,4 +1,6 @@
 
+from atexit import register
+
 from datetime import datetime
 from traceback import print_exc
 
@@ -8,11 +10,19 @@ from django_socketio import signals
 from django_socketio.channels import ChanneledSocketIOProtocol
 
 
+CLIENTS = {}
+
+@register
+def cleanup():
+    for request, socket in CLIENTS.values():
+        signals.on_finish.send(sender=request, socket=socket)
+
 def socketio(request):
     """
     Socket.IO handler.
     """
     socket = ChanneledSocketIOProtocol(request.environ["socketio"])
+    CLIENTS[socket.session.session_id] = (request, socket)
     if socket.on_connect():
         signals.on_connect.send(sender=request, socket=socket)
     try:
@@ -38,4 +48,5 @@ def socketio(request):
         print_exc()
         signals.on_error.send(sender=request, socket=socket, exception=e)
     signals.on_finish.send(sender=request, socket=socket)
+    del CLIENTS[socket.session.session_id]
     return HttpResponse("")
