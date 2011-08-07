@@ -72,38 +72,50 @@ class Tests(TestCase):
         """
         Ensure that the socketio view returns a valid response and
         that signals are received. Signals are checked by pulling
-        each event name off a list of events. The error event should
-        be the only remaning. The connect signal is used to remove
-        any non-test message handlers since there's no guarantee the
-        mock socketio object will return the data they expect.
+        each event name off a list of events. The error and
+        invalid_channel events should be the only remaning.
+
+        The connect signal is used for some setup such as faking
+        channel subscription and removing any non-test event handlers
+        since there's no way for the mock socketio object to know the
+        format of the data they expect.
         """
 
-        event_names = ["connect", "message", "disconnect", "finish", "error"]
-        test_uid = "message_test"
+        event_names = ["connect", "message", "invalid_channel", "disconnect",
+                       "finish", "error"]
 
         @events.on_connect
-        def on_connect(*args):
-#            r = [r for r in signals.on_message.receivers if r[0][0] == test_uid]
-#            signals.on_message.receivers = r
+        def test_connect(request, socket):
+            for name in dir(events):
+                event = getattr(events, name)
+                if isinstance(event, events.Event):
+                    event.handlers = [h for h in event.handlers
+                                      if h[0].__name__.startswith("test_")]
+            socket.channels.append("test")
             event_names.remove("connect")
 
-        @events.on_message
-        def on_message(*args):
+        @events.on_message(channel="test")
+        def test_message(request, socket, message):
             event_names.remove("message")
 
-        @events.on_disconnect
-        def on_disconnect(*args):
+        @events.on_message(channel="invalid_channel")
+        def test_invalid_channel_message(request, socket, message):
+            event_names.remove("invalid_channel")
+
+        @events.on_disconnect(channel="test")
+        def test_disconnect(request, socket):
             event_names.remove("disconnect")
 
-        @events.on_finish
-        def on_finish(*args):
+        @events.on_finish(channel="test")
+        def test_finish(request, socket):
             event_names.remove("finish")
 
-        @events.on_error
-        def on_error(*args):
+        @events.on_error(channel="test")
+        def test_error(request, socket, exception):
             event_names.remove("error")
 
         response = SocketIoClient().get(reverse("socketio"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(event_names), 1)
-        self.assertEqual(event_names[0], "error")
+        self.assertEqual(len(event_names), 2)
+        self.assertTrue("invalid_channel" in event_names)
+        self.assertTrue("error" in event_names)

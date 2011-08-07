@@ -58,10 +58,10 @@ class Event(object):
         handlers with a channel pattern that matches any of the
         channels that the given socket is subscribed to.
         """
-        for handler, channel_pattern in self.handlers:
-            no_channel = channel_pattern is None and not socket.channels
-            matched = [channel_pattern.match(c) for c in socket.channels]
-            if no_channel or matched:
+        for handler, pattern in self.handlers:
+            no_channel = not pattern and not socket.channels
+            matches = [pattern.match(c) for c in socket.channels if pattern]
+            if no_channel or filter(None, matches):
                 handler(request, socket, *args)
 
 on_connect      = Event(False)  # request, socket

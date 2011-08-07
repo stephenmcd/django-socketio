@@ -34,16 +34,16 @@ def format_log(request, message):
 def socketio(request):
     """
     Socket.IO handler - maintains the lifecycle of a Socket.IO
-    connection, sending the each of the events. Also handles
+    request, sending the each of the events. Also handles
     adding/removing request/socket pairs to the CLIENTS dict
     which is used for sending on_finish events when the server
     stops.
     """
     socket = SocketIOChannelProxy(request.environ["socketio"])
     CLIENTS[socket.session.session_id] = (request, socket)
-    if socket.on_connect():
-        events.on_connect.send(request, socket)
     try:
+        if socket.on_connect():
+            events.on_connect.send(request, socket)
         while True:
             message = socket.recv()
             if len(message) > 0:
@@ -60,9 +60,9 @@ def socketio(request):
                 if not socket.connected():
                     events.on_disconnect.send(request, socket)
                     break
-    except Exception, e:
+    except Exception, exception:
         print_exc()
-        events.on_error.send(request, socket, e)
+        events.on_error.send(request, socket, exception)
     events.on_finish.send(request, socket)
     del CLIENTS[socket.session.session_id]
     return HttpResponse("")
