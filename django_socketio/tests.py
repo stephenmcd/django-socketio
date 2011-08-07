@@ -7,7 +7,26 @@ from django.test import TestCase
 from django_socketio import signals
 
 
-class MockSocketIo(object):
+class MockAttributes(object):
+    """
+    A callable object that will always return a value for missing
+    attributes accessed. The value returned is a new MockAttributes
+    instance allowing for successful chained attribute access.
+    """
+
+    def __getattr__(self, name):
+        """
+        Store the value returned so that the same object is always
+        given when the attribute is accessed. Required for correct
+        results when used as a dictionary key.
+        """
+        setattr(self, name, MockAttributes())
+        return getattr(self, name)
+
+    def __call__(self, *args, **kwargs):
+        return None
+
+class MockSocketIo(MockAttributes):
     """
     Mock socket.io object for testing.
     """

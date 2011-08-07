@@ -29,7 +29,7 @@ def format_log(request, message):
     """
     now = datetime.now().replace(microsecond=0)
     info = (request.META["REMOTE_ADDR"], now, message)
-    return '%s - - [%s] "Socket.IO message: %s"' % info
+    return '%s - - [%s] "Socket.IO message: %s"\n' % info
 
 def socketio(request):
     """
@@ -48,7 +48,7 @@ def socketio(request):
         while True:
             message = socket.recv()
             if len(message) > 0:
-                socket.log(format_log(request, message))
+                socket.handler.server.log.write(format_log(request, message))
                 if message[0] == "__subscribe__" and len(message) == 2:
                     socket.subscribe(message[1])
                     signals.on_subscribe.send(channel=message[1], **signal_args)

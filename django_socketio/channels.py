@@ -59,13 +59,6 @@ class ChanneledSocketIOProtocol(object):
                 if subscriber != self.socket.session.session_id:
                     self._write(message, self.socket.handler.server.sessions[subscriber])
 
-    def log(self, message):
-        """
-        Logging shortcut to the server's log method.
-        """
-        if hasattr(self.socket, "handler"):
-            self.socket.handler.server.log.write(message + "\n")
-
     def __getattr__(self, name):
         """
         Proxy missing attributes to the socket.
