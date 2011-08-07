@@ -1,10 +1,9 @@
 
 from django.core.urlresolvers import reverse
-from django.dispatch import receiver
 from django.test import Client
 from django.test import TestCase
 
-from django_socketio import signals
+from django_socketio import events
 
 
 class MockAttributes(object):
@@ -79,32 +78,32 @@ class Tests(TestCase):
         mock socketio object will return the data they expect.
         """
 
-        events = ["connect", "message", "disconnect", "finish", "error"]
+        event_names = ["connect", "message", "disconnect", "finish", "error"]
         test_uid = "message_test"
 
-        @receiver(signals.on_connect)
-        def on_connect(sender, **kwargs):
-            r = [r for r in signals.on_message.receivers if r[0][0] == test_uid]
-            signals.on_message.receivers = r
-            events.remove("connect")
+        @events.on_connect
+        def on_connect(*args):
+#            r = [r for r in signals.on_message.receivers if r[0][0] == test_uid]
+#            signals.on_message.receivers = r
+            event_names.remove("connect")
 
-        @receiver(signals.on_message, dispatch_uid=test_uid)
-        def on_message(sender, **kwargs):
-            events.remove("message")
+        @events.on_message
+        def on_message(*args):
+            event_names.remove("message")
 
-        @receiver(signals.on_disconnect)
-        def on_disconnect(sender, **kwargs):
-            events.remove("disconnect")
+        @events.on_disconnect
+        def on_disconnect(*args):
+            event_names.remove("disconnect")
 
-        @receiver(signals.on_finish)
-        def on_finish(sender, **kwargs):
-            events.remove("finish")
+        @events.on_finish
+        def on_finish(*args):
+            event_names.remove("finish")
 
-        @receiver(signals.on_error)
-        def on_error(sender, **kwargs):
-            events.remove("error")
+        @events.on_error
+        def on_error(*args):
+            event_names.remove("error")
 
         response = SocketIoClient().get(reverse("socketio"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(events), 1)
-        self.assertEqual(events[0], "error")
+        self.assertEqual(len(event_names), 1)
+        self.assertEqual(event_names[0], "error")

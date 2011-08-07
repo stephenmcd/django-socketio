@@ -1,13 +1,13 @@
 
 from atexit import register
-
 from datetime import datetime
 from traceback import print_exc
 
 from django.http import HttpResponse
 
-from django_socketio import signals
-from django_socketio.channels import ChanneledSocketIOProtocol
+from django_socketio import events
+from django_socketio.channels import SocketIOChannelProxy
+
 
 # Maps open Socket.IO session IDs to request/socket pairs for
 # guaranteeing the on_finish signal being sent when the server
@@ -21,7 +21,7 @@ def cleanup():
     is unexpectedly stopped.
     """
     for request, socket in CLIENTS.values():
-        signals.on_finish.send(sender=request, socket=socket)
+        events.on_finish.send(request, socket)
 
 def format_log(request, message):
     """
@@ -34,16 +34,15 @@ def format_log(request, message):
 def socketio(request):
     """
     Socket.IO handler - maintains the lifecycle of a Socket.IO
-    connection, sending the each of the signals. Also handles
+    connection, sending the each of the events. Also handles
     adding/removing request/socket pairs to the CLIENTS dict
-    which is used for sending on_finish signals when the server
+    which is used for sending on_finish events when the server
     stops.
     """
-    socket = ChanneledSocketIOProtocol(request.environ["socketio"])
+    socket = SocketIOChannelProxy(request.environ["socketio"])
     CLIENTS[socket.session.session_id] = (request, socket)
-    signal_args = {"sender": request, "socket": socket}
     if socket.on_connect():
-        signals.on_connect.send(**signal_args)
+        events.on_connect.send(request, socket)
     try:
         while True:
             message = socket.recv()
@@ -51,19 +50,19 @@ def socketio(request):
                 socket.handler.server.log.write(format_log(request, message))
                 if message[0] == "__subscribe__" and len(message) == 2:
                     socket.subscribe(message[1])
-                    signals.on_subscribe.send(channel=message[1], **signal_args)
+                    events.on_subscribe.send(request, socket, message[1])
                 elif message[0] == "__unsubscribe__" and len(message) == 2:
+                    events.on_unsubscribe.send(request, socket, message[1])
                     socket.unsubscribe(message[1])
-                    signals.on_unsubscribe.send(channel=message[1], **signal_args)
                 else:
-                    signals.on_message.send(message=message, **signal_args)
+                    events.on_message.send(request, socket, message)
             else:
                 if not socket.connected():
-                    signals.on_disconnect.send(**signal_args)
+                    events.on_disconnect.send(request, socket)
                     break
     except Exception, e:
         print_exc()
-        signals.on_error.send(exception=e, **signal_args)
-    signals.on_finish.send(**signal_args)
+        events.on_error.send(request, socket, e)
+    events.on_finish.send(request, socket)
     del CLIENTS[socket.session.session_id]
     return HttpResponse("")

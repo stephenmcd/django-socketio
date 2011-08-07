@@ -6,7 +6,7 @@ from collections import defaultdict
 CHANNELS = defaultdict(list)
 
 
-class ChanneledSocketIOProtocol(object):
+class SocketIOChannelProxy(object):
     """
     Proxy object for SocketIOProtocol that adds channel subscription
     and broadcast.
