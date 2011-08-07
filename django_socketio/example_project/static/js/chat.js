@@ -1,19 +1,20 @@
 $(function() {
 
-    var name, connected = false;
+    var name, started = false;
 
     var addMessage = function(data) {
         var d = new Date();
-        var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
-        var pad = function(s) {return (s.length == 1 ? '0' : '') + s;}
-        data.time = [pad(h), pad(m), pad(s)].join(':');
+        data.time = $.map([d.getHours(), d.getMinutes(), d.getSeconds()],
+                          function(s) {
+                              return (s.length == 1 ? '0' : '') + s;
+                          }).join(':');
         $('#message-template').tmpl(data).appendTo('#messages');
     };
 
     $('form').submit(function() {
         var value = $('#message').val();
         if (value) {
-            if (!connected) {
+            if (!started) {
                 name = value;
                 socket.send({room: window.room, action: 'start', name: name});
             } else {
@@ -26,26 +27,29 @@ $(function() {
 
     var socket = new io.Socket();
     socket.connect();
+    socket.on('connect', function() {
+        socket.subscribe('room-' + window.room);
+        $('form').show();
+    });
 
     socket.on('message', function(data) {
         switch (data.action) {
             case 'in-use':
                 alert('Name is in use, please choose another');
                 break;
-            case 'start':
-                socket.subscribe(window.room);
-                connected = true;
+            case 'started':
+                started = true;
                 $('#submit').val('Send message');
+                addMessage({name: name, message: 'joins'});
                 break;
-            case 'join':
-                addMessage(data);
-                break;
-            case 'leave':
-                addMessage(data);
-                break;
-            case 'message':
-                addMessage(data);
-                break;
+            default:
+                if (started) {
+                    if (data.action != 'message') { // join or leave
+                        data.message = data.action + 's';
+                    }
+                    addMessage(data);
+                    break;
+                }
         }
     });
 
