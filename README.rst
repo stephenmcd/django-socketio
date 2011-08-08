@@ -39,6 +39,15 @@ from source::
 Once installed you can then add ``django_socketio`` to your
 ``INSTALLED_APPS`` and ``django_socketio.urls`` to your url conf.
 
+Running
+=======
+
+The ``runserver_socketio`` management command is provided which will
+run gevent's pywsgi server which is required for supporting the type of
+long-running request a WebSocket will use::
+
+    $ python manage.py runserver_socketio addr:port
+
 Channels
 ========
 
@@ -76,11 +85,65 @@ Events
 ======
 
 The ``django_socket.io.events`` module provides a handful of events
-that can be subscribed to, very much like connecting receiver
-functions to Django signals.
+that act can be subscribed to, very much like connecting receiver
+functions to Django signals. Each of these events are raised
+throughout the relevant stages of a Socket.IO request.
 
-TODO: document each event
+Events are subscribed to by applying each event as a decorator
+for your event handler functions::
 
+    from django_socketio.events import on_message
+
+    @on_message
+    def my_message_handler(request, socket, message):
+        ...
+
+Each event handler takes at least two arguments: the current Django
+``request``, and the Socket.IO ``socket`` the event occurred for.
+
+  * ``on_connect`` - occurs once when the WebSocket connection is first established.
+  * ``on_message`` - occurs every time data is sent to the WebSocket. Takes a third ``message`` argument which contains the data sent.
+  * ``on_subscribe`` - occurs when a channel is subscribed to. Takes a third ``channel`` argument which contains the channel subscribed to.
+  * ``on_unsubscribe`` - occurs when a channel is unsubscribed from. Takes a third ``channel`` argument which contains the channel unsubscribed from.
+  * ``on_error`` - occurs when an error is raised. Takes a third ``exception`` argument which contains the exception for the error.
+  * ``on_disconnect`` - occurs once when the WebSocket disconnects.
+  * ``on_finish`` - occurs once when the Socket.IO request is finished.
+
+All events other than the ``on_connect`` event can also be bound to
+particular channels by passing a ``channel`` argument to the event
+decorator. The channel argument can contain a regular expression
+pattern used to match again multiple channels of similar function.
+
+For example, suppose you implemented a chat site with multiple rooms.
+WebSockets would be the basis for your chat rooms, however to may use
+them elsewhere in the site for different purposes, perhaps an admin
+dashboard. In this case there would be two distinct WebSocket uses,
+with the chat rooms each requiring their own individual channels.
+
+Suppose each chat room user subscribes to a channel client-side
+using the room's ID::
+
+    var socket = new io.Socket();
+    socket.connect();
+    socket.on('connect', function() {
+        socket.subscribe('room-10');
+    });
+
+Then server-side the different message handlers are bound to each
+type of channel::
+
+    @on_message(channel="dashboard")
+    def my_dashboard_handler(request, socket, message):
+        ...
+
+    @on_message(channel="^room-")
+    def my_chat_handler(request, socket, message):
+        ...
+
+Like Django signals, event handlers can be defined anywhere so long
+as they end up being imported. Consider adding them to their own
+module that gets imported by your urlconf, or even adding them to
+your views module since they're conceptually similar to views.
 
 .. _`BSD licensed`: http://www.linfo.org/bsdlicense.html
 .. _`Django`: http://djangoproject.com/
@@ -96,4 +159,3 @@ TODO: document each event
 .. _`signals`: https://docs.djangoproject.com/en/dev/topics/signals/
 .. _`pip`: http://www.pip-installer.org/
 .. _`setuptools`: http://pypi.python.org/pypi/setuptools
-
