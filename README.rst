@@ -14,7 +14,7 @@ The features provided by django-socketio are:
 
   * Installation of required packages from `PyPI`_
   * A management command for running gevent's pywsgi server with auto-reloading capabilities
-  * A channel subscription and broadcast system that extends Socket.IO allowing websockets and events to be partitioned into separate concerns
+  * A channel subscription and broadcast system that extends Socket.IO allowing WebSockets and events to be partitioned into separate concerns
   * A `signals`_-like event system that abstracts away the various stages of a Socket.IO request
   * The required views, urlpatterns, templatetags and tests for all the above
 
@@ -84,13 +84,13 @@ broadcast to the channel server-side in Python using the
 Events
 ======
 
-The ``django_socket.io.events`` module provides a handful of events
-that act can be subscribed to, very much like connecting receiver
+The ``django_socketio.events`` module provides a handful of events
+that can be subscribed to, very much like connecting receiver
 functions to Django signals. Each of these events are raised
 throughout the relevant stages of a Socket.IO request.
 
 Events are subscribed to by applying each event as a decorator
-for your event handler functions::
+to your event handler functions::
 
     from django_socketio.events import on_message
 
@@ -123,18 +123,20 @@ decorator. The channel argument can contain a regular expression
 pattern used to match again multiple channels of similar function.
 
 For example, suppose you implemented a chat site with multiple rooms.
-WebSockets would be the basis for your chat rooms, however to may use
-them elsewhere in the site for different purposes, perhaps an admin
-dashboard. In this case there would be two distinct WebSocket uses,
-with the chat rooms each requiring their own individual channels.
+WebSockets would be the basis for users communicating within each
+chat room, however you may want to use them elsewhere throughout the
+site for different purposes, perhaps for a real-time admin dashboard.
+In this case there would be two distinct WebSocket uses, with the chat
+rooms each requiring their own individual channels.
 
 Suppose each chat room user subscribes to a channel client-side
 using the room's ID::
 
     var socket = new io.Socket();
+    var roomID = 42;
     socket.connect();
     socket.on('connect', function() {
-        socket.subscribe('room-10');
+        socket.subscribe('room-' + roomID);
     });
 
 Then server-side the different message handlers are bound to each
@@ -147,6 +149,15 @@ type of channel::
     @on_message(channel="^room-")
     def my_chat_handler(request, socket, message):
         ...
+
+Chat Demo
+=========
+
+The "hello world" of WebSocket applications is naturally the chat
+room. As such django-socketio comes with a demo chat application
+that provides examples of the different events and channel features
+available. The demo can be found in the ``example_project`` directory
+of the ``django_socketio`` package.
 
 .. _`BSD licensed`: http://www.linfo.org/bsdlicense.html
 .. _`Django`: http://djangoproject.com/
