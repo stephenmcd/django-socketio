@@ -109,6 +109,14 @@ Each event handler takes at least two arguments: the current Django
   * ``on_disconnect`` - occurs once when the WebSocket disconnects.
   * ``on_finish`` - occurs once when the Socket.IO request is finished.
 
+Like Django signals, event handlers can be defined anywhere so long
+as they end up being imported. Consider adding them to their own
+module that gets imported by your urlconf, or even adding them to
+your views module since they're conceptually similar to views.
+
+Binding Events to Channels
+==========================
+
 All events other than the ``on_connect`` event can also be bound to
 particular channels by passing a ``channel`` argument to the event
 decorator. The channel argument can contain a regular expression
@@ -139,11 +147,6 @@ type of channel::
     @on_message(channel="^room-")
     def my_chat_handler(request, socket, message):
         ...
-
-Like Django signals, event handlers can be defined anywhere so long
-as they end up being imported. Consider adding them to their own
-module that gets imported by your urlconf, or even adding them to
-your views module since they're conceptually similar to views.
 
 .. _`BSD licensed`: http://www.linfo.org/bsdlicense.html
 .. _`Django`: http://djangoproject.com/
