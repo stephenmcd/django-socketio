@@ -8,7 +8,7 @@ setup(
     author = "Stephen McDonald",
     author_email = "steve@jupo.org",
     description = ("A Django app providing the features required to use "
-        "websockets with Django via Socket.IO"),
+                   "websockets with Django via Socket.IO"),
     long_description = open("README.rst").read(),
     url = "http://github.com/stephenmcd/django-socketio",
     py_modules=["django_socketio",],
