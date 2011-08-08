@@ -1,16 +1,16 @@
 Introduction
 ============
 
-``django-socketio`` is a `BSD licensed`_ `Django`_ application that
+django-socketio is a `BSD licensed`_ `Django`_ application that
 brings together a variety of features that allow you to use
 `websockets`_ seamlessly with any Django project.
 
-``django-socketio`` was inspired by `Cody Soyland's`_ introductory
+django-socketio was inspired by `Cody Soyland's`_ introductory
 `blog post`_ on using `Socket.IO`_ and `gevent`_ with Django, and made
 possible by the work of `Jeffrey Gelens'`_ `gevent-websocket`_ and
 `gevent-socketio`_ packages.
 
-The features provided by ``django-socketio`` are:
+The features provided by django-socketio are:
 
   * Installation of required packages from `PyPI`_
   * A management command for running gevent's pywsgi server with auto-reloading capabilities
@@ -21,7 +21,7 @@ The features provided by ``django-socketio`` are:
 Installation
 ============
 
-The easiest way install ``django-socketio`` is directly from PyPi using
+The easiest way install django-socketio is directly from PyPi using
 `pip`_ or `setuptools`_ by running the respective command below, which
 will also attempt to install the dependencies mentioned above::
 
@@ -31,7 +31,7 @@ or::
 
     $ easy_install -U django-socketio
 
-Otherwise you can download ``django-socketio`` and install it directly
+Otherwise you can download django-socketio and install it directly
 from source::
 
     $ python setup.py install
