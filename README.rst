@@ -51,6 +51,7 @@ Channels
 .. _`Cody Soyland's`: http://codysoyland.com/
 .. _`blog post`: http://codysoyland.com/2011/feb/6/evented-django-part-one-socketio-and-gevent/
 .. _`Socket.IO`: http://socket.io/
+.. _`Jeffrey Gelens'`: http://www.gelens.org/
 .. _`gevent`: http://www.gevent.org/
 .. _`gevent-websocket`: https://bitbucket.org/Jeffrey/gevent-websocket/
 .. _`gevent-socketio`: https://bitbucket.org/Jeffrey/gevent-socketio/
