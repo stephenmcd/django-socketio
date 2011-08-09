@@ -5,6 +5,7 @@ from time import sleep
 from os import getpid, kill
 from signal import SIGINT
 
+from django.conf import settings
 from django.core.handlers.wsgi import WSGIHandler
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management.commands.runserver import naiveip_re
@@ -24,7 +25,7 @@ def reload_watcher():
 
 class Command(BaseCommand):
 
-    def handle(self, addrport="", **kwargs):
+    def handle(self, addrport="", *args, **options):
 
         if not addrport:
             self.addr = "127.0.0.1"
@@ -42,7 +43,8 @@ class Command(BaseCommand):
             print
             print "SocketIOServer running on %s:%s" % bind
             print
-            server = SocketIOServer(bind, WSGIHandler(), resource="socket.io")
+            handler = self.get_handler(*args, **options)
+            server = SocketIOServer(bind, handler, resource="socket.io")
             server.serve_forever()
         except KeyboardInterrupt:
             if RELOAD:
@@ -51,3 +53,19 @@ class Command(BaseCommand):
                 restart_with_reloader()
             else:
                 raise
+
+    def get_handler(self, *args, **options):
+        """
+        Returns the static files serving handler.
+        """
+        handler = WSGIHandler()
+        try:
+            from django.contrib.staticfiles.handlers import StaticFilesHandler
+        except ImportError:
+            return handler
+        use_static_handler = options.get('use_static_handler', True)
+        insecure_serving = options.get('insecure_serving', False)
+        if (settings.DEBUG and use_static_handler or
+                (use_static_handler and insecure_serving)):
+            handler = StaticFilesHandler(handler)
+        return handler

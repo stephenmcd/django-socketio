@@ -157,7 +157,9 @@ The "hello world" of WebSocket applications is naturally the chat
 room. As such django-socketio comes with a demo chat application
 that provides examples of the different events and channel features
 available. The demo can be found in the ``example_project`` directory
-of the ``django_socketio`` package.
+of the ``django_socketio`` package. Note that Django 1.3 or higher
+is required for the demo as it makes use of Django 1.3's
+``staticfiles`` app.
 
 .. _`BSD licensed`: http://www.linfo.org/bsdlicense.html
 .. _`Django`: http://djangoproject.com/

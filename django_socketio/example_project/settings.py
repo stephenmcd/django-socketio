@@ -35,13 +35,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-MEDIA_URL = "/static/"
-MEDIA_ROOT = full_path(MEDIA_URL.strip("/"))
+STATIC_URL = "/static/"
 ROOT_URLCONF = "urls"
 TEMPLATE_DIRS = full_path("templates")
 
 INSTALLED_APPS = (
     'django.contrib.sessions',
+    'django.contrib.staticfiles',
     'django_socketio',
     'chat',
 )

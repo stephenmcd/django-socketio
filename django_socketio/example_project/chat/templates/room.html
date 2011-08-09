@@ -3,11 +3,11 @@
 {% block title %}{{ room }}{% endblock %}
 
 {% block extra_js %}
-<script src="{{ MEDIA_URL }}js/socket.io.js"></script>
-<script src="{{ MEDIA_URL }}js/channels.js"></script>
-<script src="{{ MEDIA_URL }}js/jquery.js"></script>
-<script src="{{ MEDIA_URL }}js/jquery.tmpl.js"></script>
-<script src="{{ MEDIA_URL }}js/chat.js"></script>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+<script src="{{ STATIC_URL }}js/socket.io.js"></script>
+<script src="{{ STATIC_URL }}js/channels.js"></script>
+<script src="{{ STATIC_URL }}js/chat.js"></script>
 <script>window.room = {{ room.id }};</script>
 {% endblock %}
 
