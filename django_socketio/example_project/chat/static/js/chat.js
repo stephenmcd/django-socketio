@@ -6,6 +6,7 @@ $(function() {
         var d = new Date();
         data.time = $.map([d.getHours(), d.getMinutes(), d.getSeconds()],
                           function(s) {
+                              s = String(s);
                               return (s.length == 1 ? '0' : '') + s;
                           }).join(':');
         $('#message-template').tmpl(data).appendTo('#messages');
@@ -29,7 +30,9 @@ $(function() {
     socket.connect();
     socket.on('connect', function() {
         socket.subscribe('room-' + window.room);
-        $('form').show();
+        $('form').slideDown(function() {
+            $('#message').focus();
+        });
     });
 
     socket.on('message', function(data) {

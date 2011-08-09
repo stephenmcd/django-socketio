@@ -37,7 +37,19 @@ from source::
     $ python setup.py install
 
 Once installed you can then add ``django_socketio`` to your
-``INSTALLED_APPS`` and ``django_socketio.urls`` to your url conf.
+``INSTALLED_APPS`` and ``django_socketio.urls`` to your url conf. The
+client-side JavaScripts for Socket.IO and its extensions can then be
+added to any page with the ``socketio`` templatetag::
+
+    <head>
+        {% load socketio_tags %}
+        {% socketio %}
+        <script>
+            var socket = new io.Socket();
+            socket.connect();
+            // etc
+        </script>
+    </head>
 
 Running
 =======
