@@ -12,13 +12,19 @@
 {% endblock %}
 
 {% block main %}
-<div id="messages">
-    <script id="message-template" type="text/x-jquery-tmpl">
-	    <p>(${time}) ${name}: ${message}</p>
-    </script>
-</div>
+
+<ul id="messages">
+    <script type="text/x-jquery-tmpl"><li>(${time}) ${name}: ${message}</li></script>
+</ul>
+
+<ul id="users">
+    <script type="text/x-jquery-tmpl"><li id="user-${id}">${name}</li></script>
+</ul>
+
 <form>
     <input type="text" id="message" name="message">
     <input type="submit" id="submit" value="Join">
+    <input type="button" id="leave" value="Leave">
 </form>
+
 {% endblock %}

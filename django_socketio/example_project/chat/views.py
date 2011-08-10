@@ -18,8 +18,10 @@ def message(request, socket, message):
             user.session = socket.session.session_id
             user.save()
             users = [u.name for u in room.users.all()]
+            joined = {"action": "join", "name": user.name, "id": user.id}
             socket.send({"action": "started", "users": users})
-            socket.broadcast_channel({"action": "join", "name": user.name})
+            socket.send(joined)
+            socket.broadcast_channel(joined)
     else:
         try:
             user = room.users.get(session=socket.session.session_id)
@@ -37,7 +39,7 @@ def finish(request, socket):
         user = ChatUser.objects.get(session=socket.session.session_id)
     except ChatUser.DoesNotExist:
         return
-    socket.broadcast_channel({"action": "leave", "name": user.name})
+    socket.broadcast_channel({"action": "leave", "name": user.name, "id": user.id})
     user.delete()
 
 def rooms(request, template="rooms.html"):
