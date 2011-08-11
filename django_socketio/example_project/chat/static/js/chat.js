@@ -53,9 +53,7 @@ $(function() {
     socket.connect();
     socket.on('connect', function() {
         socket.subscribe('room-' + window.room);
-        $('form').slideDown(function() {
-            $('#message').focus();
-        });
+        showForm();
     });
 
     socket.on('message', function(data) {
@@ -66,9 +64,6 @@ $(function() {
             case 'started':
                 started = true;
                 $('#submit').val('Send');
-                $('#leave').fadeIn().click(function() {
-                    location = '/';
-                });
                 $('#users').slideDown();
                 $.each(data.users, function(i, name) {
                     addUser({name: name});
@@ -86,6 +81,8 @@ $(function() {
         }
     });
 
-    $('#message').focus();
+    $('#leave').click(function() {
+        location = '/';
+    });
 
 });

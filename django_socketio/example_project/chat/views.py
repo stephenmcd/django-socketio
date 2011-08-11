@@ -1,5 +1,5 @@
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.html import strip_tags
 from django_socketio import events
 
@@ -15,11 +15,11 @@ def message(request, socket, message):
         if not created:
             socket.send({"action": "in-use"})
         else:
+            users = [u.name for u in room.users.exclude(id=user.id)]
+            socket.send({"action": "started", "users": users})
             user.session = socket.session.session_id
             user.save()
-            users = [u.name for u in room.users.all()]
             joined = {"action": "join", "name": user.name, "id": user.id}
-            socket.send({"action": "started", "users": users})
             socket.send(joined)
             socket.broadcast_channel(joined)
     else:
@@ -49,3 +49,10 @@ def rooms(request, template="rooms.html"):
 def room(request, slug, template="room.html"):
     context = {"room": get_object_or_404(ChatRoom, slug=slug)}
     return render(request, template, context)
+
+def create(request):
+    name = request.POST.get("name")
+    if name:
+        room, created = ChatRoom.objects.get_or_create(name=name)
+        return redirect(room)
+    return redirect(rooms)
