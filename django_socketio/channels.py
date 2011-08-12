@@ -31,7 +31,7 @@ class SocketIOChannelProxy(object):
         self.channels.append(channel)
         return True
 
-    def unsubscribe(socket, channel):
+    def unsubscribe(self, channel):
         """
         Remove the channel from this socket's channels, and from the
         list of subscribed session IDs for the channel. Return False
