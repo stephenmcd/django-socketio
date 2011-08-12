@@ -6,15 +6,18 @@
 
 {% block main %}
 {% for room in rooms %}
-<h1><a href="{{ room.get_absolute_url }}">{{ room }}</a></h1>
-<ul class="room">
-    {% for user in room.users.all %}
-    <li>{{ user }}</li>
-    {% endfor %}
-</ul>
+<div class="room">
+    <h1><a href="{{ room.get_absolute_url }}">{{ room }}</a></h1>
+    <ul>
+        {% for user in room.users.all %}
+        <li>{{ user }}</li>
+        {% endfor %}
+    </ul>
+</div>
 {% empty %}
 <p>There are currently no rooms! Add one below.</p>
 {% endfor %}
+<br clear="all">
 {% endblock %}
 
 {% block form %}
