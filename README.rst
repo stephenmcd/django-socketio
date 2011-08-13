@@ -21,7 +21,13 @@ The features provided by django-socketio are:
 Installation
 ============
 
-The easiest way install django-socketio is directly from PyPi using
+Note that if you've never installed gevent, you'll first need to
+install the libevent development library. This can be achieved on
+Debian based sytems with the following command::
+
+    $ sudo apt-get install libevent-dev
+
+The easiest way to install django-socketio is directly from PyPi using
 `pip`_ or `setuptools`_ by running the respective command below, which
 will also attempt to install the dependencies mentioned above::
 

@@ -6,3 +6,6 @@ syntax: glob
 .DS_Store
 .coverage
 local_settings.py
+dist/*
+django_socketio.egg-info/*
+
