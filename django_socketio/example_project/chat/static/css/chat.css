@@ -13,7 +13,8 @@ input {border:1px solid #999; padding:10px; border-radius:5px;}
 ul {margin:0; padding:0; list-style-type:none;}
 h1, p, li {margin:10px 20px;}
 
-#users {position:absolute; right:0; top:0; bottom:0; width:200px;
-        background:#eee; display:none; overflow:hidden; border-left:1px solid #ccc;}
+#users {position:fixed; right:0; top:0; bottom:0; width:200px;
+        background:#eee; display:none; overflow:hidden;
+        border-left:1px solid #ccc;}
 
 .room {float:left;}
