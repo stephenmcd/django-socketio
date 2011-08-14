@@ -7,5 +7,6 @@ syntax: glob
 .coverage
 local_settings.py
 dist/*
+build/*
 django_socketio.egg-info/*
 
