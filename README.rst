@@ -113,17 +113,20 @@ to your event handler functions::
     from django_socketio.events import on_message
 
     @on_message
-    def my_message_handler(request, socket, message):
+    def my_message_handler(request, socket, context, message):
         ...
 
-Each event handler takes at least two arguments: the current Django
-``request``, and the Socket.IO ``socket`` the event occurred for.
+Each event handler takes at least three arguments: the current Django
+``request``, the Socket.IO ``socket`` the event occurred for, and a
+``context``, which is simplay a dictionary that can be used to persist
+variables across all events throughout the life-cycle of a single
+WebSocket connection.
 
   * ``on_connect`` - occurs once when the WebSocket connection is first established.
-  * ``on_message`` - occurs every time data is sent to the WebSocket. Takes a third ``message`` argument which contains the data sent.
-  * ``on_subscribe`` - occurs when a channel is subscribed to. Takes a third ``channel`` argument which contains the channel subscribed to.
-  * ``on_unsubscribe`` - occurs when a channel is unsubscribed from. Takes a third ``channel`` argument which contains the channel unsubscribed from.
-  * ``on_error`` - occurs when an error is raised. Takes a third ``exception`` argument which contains the exception for the error.
+  * ``on_message`` - occurs every time data is sent to the WebSocket. Takes an extra ``message`` argument which contains the data sent.
+  * ``on_subscribe`` - occurs when a channel is subscribed to. Takes an extra ``channel`` argument which contains the channel subscribed to.
+  * ``on_unsubscribe`` - occurs when a channel is unsubscribed from. Takes an extra ``channel`` argument which contains the channel unsubscribed from.
+  * ``on_error`` - occurs when an error is raised. Takes an extra ``exception`` argument which contains the exception for the error.
   * ``on_disconnect`` - occurs once when the WebSocket disconnects.
   * ``on_finish`` - occurs once when the Socket.IO request is finished.
 
@@ -161,11 +164,11 @@ Then server-side the different message handlers are bound to each
 type of channel::
 
     @on_message(channel="dashboard")
-    def my_dashboard_handler(request, socket, message):
+    def my_dashboard_handler(request, socket, context, message):
         ...
 
     @on_message(channel="^room-")
-    def my_chat_handler(request, socket, message):
+    def my_chat_handler(request, socket, context, message):
         ...
 
 Chat Demo
