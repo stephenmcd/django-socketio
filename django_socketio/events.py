@@ -50,7 +50,7 @@ class Event(object):
             channel = re.compile(channel)
         self.handlers.append((handler, channel))
 
-    def send(self, request, socket, *args):
+    def send(self, request, socket, context, *args):
         """
         When an event is sent, run all relevant handlers. Relevant
         handlers are those without a channel pattern when the given
@@ -62,15 +62,15 @@ class Event(object):
             no_channel = not pattern and not socket.channels
             matches = [pattern.match(c) for c in socket.channels if pattern]
             if no_channel or filter(None, matches):
-                handler(request, socket, *args)
+                handler(request, socket, context, *args)
 
-on_connect      = Event(False)  # request, socket
-on_message      = Event()       # request, socket, message
-on_subscribe    = Event()       # request, socket, channel
-on_unsubscribe  = Event()       # request, socket, channel
-on_error        = Event()       # request, socket, exception
-on_disconnect   = Event()       # request, socket
-on_finish       = Event()       # request, socket
+on_connect      = Event(False)  # request, socket, context
+on_message      = Event()       # request, socket, context, message
+on_subscribe    = Event()       # request, socket, context, channel
+on_unsubscribe  = Event()       # request, socket, context, channel
+on_error        = Event()       # request, socket, context, exception
+on_disconnect   = Event()       # request, socket, context
+on_finish       = Event()       # request, socket, context
 
 # Give each event a name attribute.
 for k, v in globals().items():

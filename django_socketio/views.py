@@ -39,30 +39,31 @@ def socketio(request):
     which is used for sending on_finish events when the server
     stops.
     """
+    context = {}
     socket = SocketIOChannelProxy(request.environ["socketio"])
-    CLIENTS[socket.session.session_id] = (request, socket)
+    CLIENTS[socket.session.session_id] = (request, socket, context)
     try:
         if socket.on_connect():
-            events.on_connect.send(request, socket)
+            events.on_connect.send(request, socket, context)
         while True:
             message = socket.recv()
             if len(message) > 0:
                 socket.handler.server.log.write(format_log(request, message))
                 if message[0] == "__subscribe__" and len(message) == 2:
                     socket.subscribe(message[1])
-                    events.on_subscribe.send(request, socket, message[1])
+                    events.on_subscribe.send(request, socket, context, message[1])
                 elif message[0] == "__unsubscribe__" and len(message) == 2:
-                    events.on_unsubscribe.send(request, socket, message[1])
+                    events.on_unsubscribe.send(request, socket, context, message[1])
                     socket.unsubscribe(message[1])
                 else:
-                    events.on_message.send(request, socket, message)
+                    events.on_message.send(request, socket, context, message)
             else:
                 if not socket.connected():
-                    events.on_disconnect.send(request, socket)
+                    events.on_disconnect.send(request, socket, context)
                     break
     except Exception, exception:
         print_exc()
-        events.on_error.send(request, socket, exception)
-    events.on_finish.send(request, socket)
+        events.on_error.send(request, socket, context, exception)
+    events.on_finish.send(request, socket, context)
     del CLIENTS[socket.session.session_id]
     return HttpResponse("")
