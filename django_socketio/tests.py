@@ -85,7 +85,7 @@ class Tests(TestCase):
                        "finish", "error"]
 
         @events.on_connect
-        def test_connect(request, socket):
+        def test_connect(request, socket, context):
             for name in dir(events):
                 event = getattr(events, name)
                 if isinstance(event, events.Event):
@@ -93,25 +93,30 @@ class Tests(TestCase):
                                       if h[0].__name__.startswith("test_")]
             socket.channels.append("test")
             event_names.remove("connect")
+            context["test1"] = 1
+            context["test2"] = 2
 
         @events.on_message(channel="test")
-        def test_message(request, socket, message):
+        def test_message(request, socket, context, message):
+            del context["test1"]
             event_names.remove("message")
 
         @events.on_message(channel="invalid_channel")
-        def test_invalid_channel_message(request, socket, message):
+        def test_invalid_channel_message(request, socket, context, message):
             event_names.remove("invalid_channel")
 
         @events.on_disconnect(channel="test")
-        def test_disconnect(request, socket):
+        def test_disconnect(request, socket, context):
             event_names.remove("disconnect")
 
         @events.on_finish(channel="test")
-        def test_finish(request, socket):
+        def test_finish(request, socket, context):
             event_names.remove("finish")
+            self.assertEqual(len(context), 1)
+            self.assertTrue("test2" in context)
 
         @events.on_error(channel="test")
-        def test_error(request, socket, exception):
+        def test_error(request, socket, context, exception):
             event_names.remove("error")
 
         response = SocketIoClient().get(reverse("socketio"))
