@@ -118,7 +118,7 @@ to your event handler functions::
 
 Each event handler takes at least three arguments: the current Django
 ``request``, the Socket.IO ``socket`` the event occurred for, and a
-``context``, which is simplay a dictionary that can be used to persist
+``context``, which is simply a dictionary that can be used to persist
 variables across all events throughout the life-cycle of a single
 WebSocket connection.
 
