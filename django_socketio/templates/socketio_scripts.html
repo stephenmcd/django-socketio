@@ -1,2 +1,33 @@
 <script src="{{ STATIC_URL|default:MEDIA_URL }}js/socket.io.js"></script>
-<script src="{{ STATIC_URL|default:MEDIA_URL }}js/channels.js"></script>
+<script>
+
+(function() {
+
+    // Override the SocketIO constructor to provide a default
+    // value for the port, which is added to os.environ in the
+    // runserver_socketio management command.
+    var prototype = io.Socket.prototype;
+    io.Socket = function(host, options) {
+        options = options || {};
+        options.port = options.port || {{ DJANGO_SOCKETIO_PORT }};
+        return prototype.constructor.call(this, host, options);
+    };
+
+    // We need to reassign all members for the above to work.
+    for (var name in prototype) {
+        io.Socket.prototype[name] = prototype[name];
+    }
+
+    // Set up the subscription methods.
+    io.Socket.prototype.subscribe = function(channel) {
+        this.send(['__subscribe__', channel]);
+        return this;
+    };
+    io.Socket.prototype.unsubscribe = function(channel) {
+        this.send(['__unsubscribe__', channel]);
+        return this;
+    };
+
+})();
+
+</script>

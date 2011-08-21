@@ -2,7 +2,7 @@
 from re import match
 from thread import start_new_thread
 from time import sleep
-from os import getpid, kill
+from os import getpid, kill, environ
 from signal import SIGINT
 
 from django.conf import settings
@@ -38,6 +38,13 @@ class Command(BaseCommand):
                 raise CommandError('"%s" is not a valid port number '
                                    'or address:port pair.' % addrport)
             self.addr, _, _, _, self.port = m.groups()
+
+        # Make the port available here for the path:
+        #   socketio_tags.socketio ->
+        #   socketio_scripts.html ->
+        #   io.Socket JS constructor
+        # allowing the port to be set as the client-side default there.
+        environ["DJANGO_SOCKETIO_PORT"] = str(self.port)
 
         start_new_thread(reload_watcher, ())
         try:
