@@ -12,6 +12,8 @@ from django.core.management.commands.runserver import naiveip_re
 from django.utils.autoreload import code_changed, restart_with_reloader
 from socketio import SocketIOServer
 
+from django_socketio.settings import HOST, PORT
+
 
 RELOAD = False
 
@@ -28,8 +30,8 @@ class Command(BaseCommand):
     def handle(self, addrport="", *args, **options):
 
         if not addrport:
-            self.addr = "127.0.0.1"
-            self.port = 9000
+            self.addr = HOST
+            self.port = PORT
         else:
             m = match(naiveip_re, addrport)
             if m is None:
@@ -56,7 +58,7 @@ class Command(BaseCommand):
 
     def get_handler(self, *args, **options):
         """
-        Returns the static files serving handler.
+        Returns the django.contrib.staticfiles handler.
         """
         handler = WSGIHandler()
         try:
