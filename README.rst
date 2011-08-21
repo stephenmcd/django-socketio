@@ -67,7 +67,7 @@ long-running request a WebSocket will use::
     $ python manage.py runserver_socketio host:port
 
 Note that the host and port can also configured by defining the following
-settings in your project's settings module::
+settings in your project's settings module:
 
     * ``DJANGO_SOCKETIO_HOST`` - The host to bind the server to.
     * ``DJANGO_SOCKETIO_PORT`` - The numeric port to bind the server to.
