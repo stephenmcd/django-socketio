@@ -69,8 +69,8 @@ long-running request a WebSocket will use::
 Note that the host and port can also configured by defining the following
 settings in your project's settings module:
 
-    * ``DJANGO_SOCKETIO_HOST`` - The host to bind the server to.
-    * ``DJANGO_SOCKETIO_PORT`` - The numeric port to bind the server to.
+    * ``SOCKETIO_HOST`` - The host to bind the server to.
+    * ``SOCKETIO_PORT`` - The numeric port to bind the server to.
 
 These settings are only used when their values are not specified as
 arguments to the ``runserver_socketio`` command, which always takes
