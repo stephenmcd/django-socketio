@@ -8,6 +8,10 @@ from chat.models import ChatRoom, ChatUser
 
 @events.on_message(channel="^room-")
 def message(request, socket, context, message):
+    """
+    Event handler for a room receiving a message. First validates a
+    joining user's name and sends them the list of users.
+    """
     message = message[0]
     room = get_object_or_404(ChatRoom, id=message["room"])
     if message["action"] == "start":
@@ -36,6 +40,10 @@ def message(request, socket, context, message):
 
 @events.on_finish(channel="^room-")
 def finish(request, socket, context):
+    """
+    Event handler for a socket session ending in a room. Broadcast
+    the user leaving and delete them from the DB.
+    """
     try:
         user = context["user"]
     except KeyError:
@@ -44,14 +52,24 @@ def finish(request, socket, context):
     user.delete()
 
 def rooms(request, template="rooms.html"):
+    """
+    Homepage - lists all rooms.
+    """
     context = {"rooms": ChatRoom.objects.all()}
     return render(request, template, context)
 
 def room(request, slug, template="room.html"):
+    """
+    Show a room.
+    """
     context = {"room": get_object_or_404(ChatRoom, slug=slug)}
     return render(request, template, context)
 
 def create(request):
+    """
+    Handles post from the "Add room" form on the homepage, and
+    redirects to the new room.
+    """
     name = request.POST.get("name")
     if name:
         room, created = ChatRoom.objects.get_or_create(name=name)
