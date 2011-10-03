@@ -50,10 +50,10 @@ class SocketIOChannelProxy(object):
         given. If no channel is given, send to the subscribers for
         all the channels that this socket is subscribed to.
         """
-        if channel in self.channels:
-            channels = [channel]
-        else:
+        if channel is None:
             channels = self.channels
+        else:
+            channels = [channel]
         for channel in channels:
             for subscriber in CHANNELS[channel]:
                 if subscriber != self.socket.session.session_id:
