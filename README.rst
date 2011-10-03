@@ -181,6 +181,19 @@ type of channel::
     def my_chat_handler(request, socket, context, message):
         ...
 
+Logging
+=======
+
+The following setting can be used to configure logging:
+
+    * ``SOCKETIO_MESSAGE_LOG_FORMAT`` - A format string used for logging
+      each message sent via a socket. The string is formatted using
+      interpolation with a dictionary. The dictionary contains all the
+      keys found in Django's ``request["META"]``, as well as ``TIME``
+      and ``MESSAGE`` keys which contain the time of the message and
+      the message contents respectively. Set this setting to ``None``
+      to disable message logging.
+
 Chat Demo
 =========
 

@@ -7,6 +7,7 @@ from django.http import HttpResponse
 
 from django_socketio import events
 from django_socketio.channels import SocketIOChannelProxy
+from django_socketio.settings import MESSAGE_LOG_FORMAT
 
 
 # Maps open Socket.IO session IDs to request/socket pairs for
@@ -28,8 +29,8 @@ def format_log(request, message):
     Formats a log message similar to gevent's pywsgi request logging.
     """
     now = datetime.now().replace(microsecond=0)
-    info = (request.META["REMOTE_ADDR"], now, message)
-    return '%s - - [%s] "Socket.IO message: %s"\n' % info
+    log = MESSAGE_LOG_FORMAT % dict(request.META, MESSAGE=message, TIME=now)
+    return log + "\n"
 
 def socketio(request):
     """
@@ -48,7 +49,8 @@ def socketio(request):
         while True:
             message = socket.recv()
             if len(message) > 0:
-                socket.handler.server.log.write(format_log(request, message))
+                if MESSAGE_LOG_FORMAT is not None:
+                    socket.handler.server.log.write(format_log(request, message))
                 if message[0] == "__subscribe__" and len(message) == 2:
                     socket.subscribe(message[1])
                     events.on_subscribe.send(request, socket, context, message[1])
