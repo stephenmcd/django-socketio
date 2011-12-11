@@ -1,7 +1,8 @@
 
+from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.html import strip_tags
-from django_socketio import events
+from django_socketio import events, broadcast, broadcast_channel, NoSockets
 
 from chat.models import ChatRoom, ChatUser
 
@@ -25,8 +26,7 @@ def message(request, socket, context, message):
             user.session = socket.session.session_id
             user.save()
             joined = {"action": "join", "name": user.name, "id": user.id}
-            socket.send(joined)
-            socket.broadcast_channel(joined)
+            socket.send_and_broadcast_channel(joined)
     else:
         try:
             user = context["user"]
@@ -35,8 +35,7 @@ def message(request, socket, context, message):
         if message["action"] == "message":
             message["message"] = strip_tags(message["message"])
             message["name"] = user.name
-            socket.send(message)
-            socket.broadcast_channel(message)
+            socket.send_and_broadcast_channel(message)
 
 @events.on_finish(channel="^room-")
 def finish(request, socket, context):
@@ -75,3 +74,20 @@ def create(request):
         room, created = ChatRoom.objects.get_or_create(name=name)
         return redirect(room)
     return redirect(rooms)
+
+@user_passes_test(lambda user: user.is_staff)
+def system_message(request, template="system_message.html"):
+    context = {"rooms": ChatRoom.objects.all()}
+    if request.method == "POST":
+        room = request.POST["room"]
+        data = {"action": "system", "message": request.POST["message"]}
+        try:
+            if room:
+                broadcast_channel(data, channel="room-" + room)
+            else:
+                broadcast(data)
+        except NoSockets, e:
+            context["message"] = e
+        else:
+            context["message"] = "Message sent"
+    return render(request, template, context)

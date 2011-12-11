@@ -18,3 +18,5 @@ h1, p, li {margin:10px 20px;}
         border-left:1px solid #ccc;}
 
 .room {float:left;}
+form label {margin-left:10px;}
+.system {font-weight:bold; color:#f00;}

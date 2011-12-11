@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block extra_js %}
+<script>$(showForm);</script>
+{% endblock %}
+
+{% block main %}
+<p>{{ message }}</p>
+{% endblock %}
+
+{% block form %}
+<form method="post">
+    <input type="text" id="message" name="message" value="{{ request.POST.message }}">
+    <label for="room">Room:</label>
+    <select id="room" name="room">
+        <option value="">All Rooms</option>
+        {% for room in rooms %}
+        <option{% if request.POST.room == room.id %} selected{% endif %}
+            value="{{ room.id }}">{{ room }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" id="submit" value="Send">
+    {% csrf_token %}
+</form>
+{% endblock %}

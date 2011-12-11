@@ -78,6 +78,10 @@ $(function() {
             case 'message':
                 addMessage(data);
                 break;
+            case 'system':
+                data['name'] = 'SYSTEM';
+                addMessage(data);
+                break;
         }
     });
 
