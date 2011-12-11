@@ -21,8 +21,8 @@ def cleanup():
     Sends the on_finish signal to any open clients when the server
     is unexpectedly stopped.
     """
-    for request, socket in CLIENTS.values():
-        events.on_finish.send(request, socket)
+    for client in CLIENTS.values():
+        events.on_finish.send(*client)
 
 def format_log(request, message):
     """
