@@ -59,6 +59,21 @@ class SocketIOChannelProxy(object):
                 if subscriber != self.socket.session.session_id:
                     self._write(message, self.socket.handler.server.sessions[subscriber])
 
+    def send_and_broadcast(self, message):
+        """
+        Shortcut for a socket to broadcast to all sockets itself.
+        """
+        self.send(message)
+        self.broadcast(message)
+
+    def send_and_broadcast_channel(self, message, channel=None):
+        """
+        Shortcut for a socket to broadcast to all sockets subscribed
+        to a channel, and itself.
+        """
+        self.send(message)
+        self.broadcast_channel(message, channel)
+
     def __getattr__(self, name):
         """
         Proxy missing attributes to the socket.
