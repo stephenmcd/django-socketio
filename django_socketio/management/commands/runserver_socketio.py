@@ -57,6 +57,7 @@ class Command(BaseCommand):
             server.serve_forever()
         except KeyboardInterrupt:
             if RELOAD:
+                server.kill()
                 print
                 print "Reloading..."
                 restart_with_reloader()
