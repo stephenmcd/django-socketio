@@ -5,7 +5,7 @@ django-socketio is a `BSD licensed`_ `Django`_ application that
 brings together a variety of features that allow you to use
 `WebSockets`_ seamlessly with any Django project.
 
-django-socketio was inspired by `Cody Soyland's`_ introductory
+django-socketio was inspired by `Cody Soyland`_'s introductory
 `blog post`_ on using `Socket.IO`_ and `gevent`_ with Django, and
 made possible by the work of `Jeffrey Gelens'`_ `gevent-websocket`_
 and `gevent-socketio`_ packages.
@@ -13,10 +13,16 @@ and `gevent-socketio`_ packages.
 The features provided by django-socketio are:
 
   * Installation of required packages from `PyPI`_
-  * A management command for running gevent's pywsgi server with auto-reloading capabilities
-  * A channel subscription and broadcast system that extends Socket.IO allowing WebSockets and events to be partitioned into separate concerns
-  * A `signals`_-like event system that abstracts away the various stages of a Socket.IO request
-  * The required views, urlpatterns, templatetags and tests for all the above
+  * A management command for running gevent's pywsgi server with
+    auto-reloading capabilities
+  * A channel subscription and broadcast system that extends
+    Socket.IO allowing WebSockets and events to be partitioned into
+    separate concerns
+  * A `signals`_-like event system that abstracts away the various
+    stages of a Socket.IO request
+  * Support for out-of-band (non-event) broadcasts
+  * The required views, urlpatterns, templatetags and tests for all
+    the above
 
 Installation
 ============
@@ -24,7 +30,7 @@ Installation
 Note that if you've never installed gevent, you'll first need to
 install the libevent development library. You may also need the Python
 development library if not installed. This can be achieved on Debian
-based sytems with the following command::
+based sytems with the following commands::
 
     $ sudo apt-get install python-dev
     $ sudo apt-get install libevent-dev
@@ -111,6 +117,42 @@ broadcast to the channel server-side in Python using the
 
   socket.broadcast_channel("my message")
 
+Broadcast and Send Methods
+==========================
+
+Each server-side socket instance contains a handful of methods
+for sending data. The first two methods are implemented by
+`gevent-socketio`_:
+
+  * ``socket.send(message)`` - Sends the given message directly to
+    the socket.
+  * ``socket.broadcast(message)`` - Sends the given message to all
+    other sockets.
+
+The remaning methods are implemented by django-socketio.
+
+  * ``socket.broadcast_channel(message, channel=None)`` - Sends the
+    given message to all other sockets that are subscribed to the
+    given channel. If no channel is given, all channels that the
+    socket is subscribed to are used.
+    the socket.
+  * ``socket.send_and_broadcast(message)`` - Shortcut that sends the
+    message to all sockects, including the sender.
+  * ``socket.send_and_broadcast_channel(message, channel=None)``
+    - Shortcut that sends the message to all sockects for the given
+    channel, including the sender.
+
+The following broadcast methods can be imported directly from
+``django_socketio``, for broadcasting out-of-band (eg: not in response
+to a socket event). These methods map directly to the same methods on a
+socket instance, and in each case an appropriate connected socket will
+be chosen to use for sending the message, and the
+``django_socketio.NoSockets`` exception will be raised if no connected
+sockets exist.
+
+  * ``django_socketio.broadcast(message)``
+  * ``django_socketio.broadcast_channel(message, channel)``
+
 Events
 ======
 
@@ -134,13 +176,24 @@ Each event handler takes at least three arguments: the current Django
 variables across all events throughout the life-cycle of a single
 WebSocket connection.
 
-  * ``on_connect`` - occurs once when the WebSocket connection is first established.
-  * ``on_message`` - occurs every time data is sent to the WebSocket. Takes an extra ``message`` argument which contains the data sent.
-  * ``on_subscribe`` - occurs when a channel is subscribed to. Takes an extra ``channel`` argument which contains the channel subscribed to.
-  * ``on_unsubscribe`` - occurs when a channel is unsubscribed from. Takes an extra ``channel`` argument which contains the channel unsubscribed from.
-  * ``on_error`` - occurs when an error is raised. Takes an extra ``exception`` argument which contains the exception for the error.
-  * ``on_disconnect`` - occurs once when the WebSocket disconnects.
-  * ``on_finish`` - occurs once when the Socket.IO request is finished.
+  * ``on_connect(request, socket, context)`` - occurs once when the
+    WebSocket connection is first established.
+  * ``on_message(request, socket, context, message)`` - occurs every
+    time data is sent to the WebSocket. Takes an extra ``message``
+    argument which contains the data sent.
+  * ``on_subscribe(request, socket, context, channel)`` - occurs when
+    a channel is subscribed to. Takes an extra ``channel`` argument
+    which contains the channel subscribed to.
+  * ``on_unsubscribe(request, socket, context, channel)`` - occurs
+    when a channel is unsubscribed from. Takes an extra ``channel``
+    argument which contains the channel unsubscribed from.
+  * ``on_error(request, socket, context, exception)`` - occurs when
+    an error is raised. Takes an extra ``exception`` argument which
+    contains the exception for the error.
+  * ``on_disconnect(request, socket, context)`` - occurs once when
+    the WebSocket disconnects.
+  * ``on_finish(request, socket, context)`` - occurs once when the
+    Socket.IO request is finished.
 
 Like Django signals, event handlers can be defined anywhere so long
 as they end up being imported. Consider adding them to their own
@@ -201,16 +254,16 @@ Chat Demo
 
 The "hello world" of WebSocket applications is naturally the chat
 room. As such django-socketio comes with a demo chat application
-that provides examples of the different events and channel features
-available. The demo can be found in the ``example_project`` directory
-of the ``django_socketio`` package. Note that Django 1.3 or higher
-is required for the demo as it makes use of Django 1.3's
+that provides examples of the different events, channel and broadcasting
+features available. The demo can be found in the ``example_project``
+directory of the ``django_socketio`` package. Note that Django 1.3 or
+higher is required for the demo as it makes use of Django 1.3's
 ``staticfiles`` app.
 
 .. _`BSD licensed`: http://www.linfo.org/bsdlicense.html
 .. _`Django`: http://djangoproject.com/
 .. _`WebSockets`: http://en.wikipedia.org/wiki/WebSockets
-.. _`Cody Soyland's`: http://codysoyland.com/
+.. _`Cody Soyland`: http://codysoyland.com/
 .. _`blog post`: http://codysoyland.com/2011/feb/6/evented-django-part-one-socketio-and-gevent/
 .. _`Socket.IO`: http://socket.io/
 .. _`Jeffrey Gelens'`: http://www.gelens.org/
