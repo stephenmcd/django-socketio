@@ -35,6 +35,11 @@ based sytems with the following commands::
     $ sudo apt-get install python-dev
     $ sudo apt-get install libevent-dev
 
+or on OSX using `Homebrew`_ (with Xcode installed)::
+
+    $ brew install libevent
+    $ export CFLAGS=-I/brew/include
+
 The easiest way to install django-socketio is directly from PyPi using
 `pip`_ or `setuptools`_ by running the respective command below, which
 will also attempt to install the dependencies mentioned above::
@@ -272,5 +277,6 @@ higher is required for the demo as it makes use of Django 1.3's
 .. _`gevent-socketio`: https://bitbucket.org/Jeffrey/gevent-socketio/
 .. _`PyPI`: http://pypi.python.org/
 .. _`signals`: https://docs.djangoproject.com/en/dev/topics/signals/
+.. _`Homebrew`: http://mxcl.github.com/homebrew/
 .. _`pip`: http://www.pip-installer.org/
 .. _`setuptools`: http://pypi.python.org/pypi/setuptools
