@@ -8,6 +8,17 @@ class NoSockets(Exception):
     """
 
 
+def send(session_id, message):
+    """
+    Send a message to the socket for the given session ID.
+    """
+    try:
+        socket = CLIENTS[session_id][1]
+    except KeyError:
+        raise NoSockets("There is no socket with the session ID: " + session_id)
+    socket.send(message)
+
+
 def broadcast(message):
     """
     Find the first socket and use it to broadcast to all sockets
