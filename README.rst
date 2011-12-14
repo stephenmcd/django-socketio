@@ -126,8 +126,8 @@ Broadcast and Send Methods
 ==========================
 
 Each server-side socket instance contains a handful of methods
-for sending data. The first two methods are implemented by
-`gevent-socketio`_:
+for sending data. As mentioned above, the first two methods are
+implemented by `gevent-socketio`_:
 
   * ``socket.send(message)`` - Sends the given message directly to
     the socket.
@@ -147,16 +147,22 @@ The remaning methods are implemented by django-socketio.
     - Shortcut that sends the message to all sockects for the given
     channel, including the sender.
 
-The following broadcast methods can be imported directly from
-``django_socketio``, for broadcasting out-of-band (eg: not in response
-to a socket event). These methods map directly to the same methods on a
-socket instance, and in each case an appropriate connected socket will
-be chosen to use for sending the message, and the
-``django_socketio.NoSockets`` exception will be raised if no connected
+The following methods can be imported directly from
+``django_socketio`` for broadcasting and sending out-of-band (eg: not
+in response to a socket event). These methods map directly to the same
+methods on a socket instance, and in each case an appropriate connected
+socket will be chosen to use for sending the message, and the
+``django_socketio.NoSocket`` exception will be raised if no connected
 sockets exist.
 
   * ``django_socketio.broadcast(message)``
   * ``django_socketio.broadcast_channel(message, channel)``
+  * ``django_socketio.send(session_id, message)``
+
+Note that with the ``send`` method, the socket is identified by its
+session ID, accessible via ``socket.session.session_id``. This is a
+WebSocket session ID and should not be confused with a Django session
+ID which is different.
 
 Events
 ======
