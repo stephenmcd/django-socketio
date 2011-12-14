@@ -2,7 +2,7 @@
 __version__ = "0.2"
 
 
-class NoSockets(Exception):
+class NoSocket(Exception):
     """
     Raised when no clients are available to broadcast to.
     """
@@ -15,7 +15,7 @@ def send(session_id, message):
     try:
         socket = CLIENTS[session_id][1]
     except KeyError:
-        raise NoSockets("There is no socket with the session ID: " + session_id)
+        raise NoSocket("There is no socket with the session ID: " + session_id)
     socket.send(message)
 
 
@@ -28,7 +28,7 @@ def broadcast(message):
     try:
         socket = CLIENTS.values()[0][1]
     except IndexError:
-        raise NoSockets("There are no clients.")
+        raise NoSocket("There are no clients.")
     socket.send_and_broadcast(message)
 
 
@@ -42,5 +42,5 @@ def broadcast_channel(message, channel):
     try:
         socket = CLIENTS[CHANNELS.get(channel, [])[0]][1]
     except IndexError, KeyError:
-        raise NoSockets("There are no clients on the channel: " + channel)
+        raise NoSocket("There are no clients on the channel: " + channel)
     socket.send_and_broadcast_channel(message, channel)
