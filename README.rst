@@ -95,6 +95,9 @@ precedence.
     fallback to work, root privileges (eg by running the above command
     with `sudo`) are required when running the server. This is due to
     the `Flash Policy Server`_ requiring access to a low port (843).
+    This isn't required for everything to work correctly, as the
+    `flashsocket` transport is only used as one of several fallbacks
+    when websockets aren't supported by the browser.
 
 Channels
 ========
