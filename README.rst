@@ -91,13 +91,13 @@ precedence.
 
 .. note::
 
-    On UNIX-like systems, in order for the `flashsocket` transport
+    On UNIX-like systems, in order for the ``flashsocket`` transport
     fallback to work, root privileges (eg by running the above command
-    with `sudo`) are required when running the server. This is due to
-    the `Flash Policy Server`_ requiring access to a low port (843).
-    This isn't required for everything to work correctly, as the
-    `flashsocket` transport is only used as one of several fallbacks
-    when websockets aren't supported by the browser.
+    with ``sudo``) are required when running the server. This is due to
+    the `Flash Policy Server`_ requiring access to a `low port`_ (843).
+    This isn't strictly required for everything to work correctly, as
+    the ``flashsocket`` transport is only used as one of several
+    fallbacks when WebSockets aren't supported by the browser.
 
 Channels
 ========
@@ -297,3 +297,4 @@ higher is required for the demo as it makes use of Django 1.3's
 .. _`pip`: http://www.pip-installer.org/
 .. _`setuptools`: http://pypi.python.org/pypi/setuptools
 .. _`Flash Policy Server`: http://www.adobe.com/devnet/flashplayer/articles/socket_policy_files.html
+.. _`low port`: http://www.staldal.nu/tech/2007/10/31/why-can-only-root-listen-to-ports-below-1024/
