@@ -89,6 +89,13 @@ These settings are only used when their values are not specified as
 arguments to the ``runserver_socketio`` command, which always takes
 precedence.
 
+.. note::
+
+    On UNIX-like systems, in order for the `flashsocket` transport
+    fallback to work, root privileges (eg by running the above command
+    with `sudo`) are required when running the server. This is due to
+    the `Flash Policy Server`_ requiring access to a low port (843).
+
 Channels
 ========
 
@@ -286,3 +293,4 @@ higher is required for the demo as it makes use of Django 1.3's
 .. _`Homebrew`: http://mxcl.github.com/homebrew/
 .. _`pip`: http://www.pip-installer.org/
 .. _`setuptools`: http://pypi.python.org/pypi/setuptools
+.. _`Flash Policy Server`_ http://www.adobe.com/devnet/flashplayer/articles/socket_policy_files.html
