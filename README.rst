@@ -293,4 +293,4 @@ higher is required for the demo as it makes use of Django 1.3's
 .. _`Homebrew`: http://mxcl.github.com/homebrew/
 .. _`pip`: http://www.pip-installer.org/
 .. _`setuptools`: http://pypi.python.org/pypi/setuptools
-.. _`Flash Policy Server`_ http://www.adobe.com/devnet/flashplayer/articles/socket_policy_files.html
+.. _`Flash Policy Server`: http://www.adobe.com/devnet/flashplayer/articles/socket_policy_files.html
