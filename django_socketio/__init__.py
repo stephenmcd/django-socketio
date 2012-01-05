@@ -12,6 +12,7 @@ def send(session_id, message):
     """
     Send a message to the socket for the given session ID.
     """
+    from django_socketio.views import CLIENTS
     try:
         socket = CLIENTS[session_id][1]
     except KeyError:
