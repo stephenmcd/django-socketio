@@ -51,13 +51,23 @@ def socketio(request):
             if len(message) > 0:
                 if MESSAGE_LOG_FORMAT is not None:
                     socket.handler.server.log.write(format_log(request, message))
-                if message[0] == "__subscribe__" and len(message) == 2:
-                    socket.subscribe(message[1])
-                    events.on_subscribe.send(request, socket, context, message[1])
-                elif message[0] == "__unsubscribe__" and len(message) == 2:
-                    events.on_unsubscribe.send(request, socket, context, message[1])
-                    socket.unsubscribe(message[1])
-                else:
+
+                # Handle subscribe and unsubscribe requests, then excise
+                # them from the message.
+                to_remove = []
+                for i in range(0, len(message)-1):
+                    if message[i] == "__subscribe__":
+                        socket.subscribe(message[i+1])
+                        events.on_subscribe.send(request, socket, context, message[i+1])
+                        to_remove += [i, i+1]
+                    elif message[i] == "__unsubscribe__":
+                        events.on_unsubscribe.send(request, socket, context, message[i+1])
+                        socket.unsubscribe(message[i+1])
+                        to_remove += [i, i+1]
+                to_remove.reverse()
+                for index in to_remove: message.pop(index)
+
+                if len(message) > 0:
                     events.on_message.send(request, socket, context, message)
             else:
                 if not socket.connected():
