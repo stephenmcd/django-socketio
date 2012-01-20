@@ -47,32 +47,25 @@ def socketio(request):
         if socket.on_connect():
             events.on_connect.send(request, socket, context)
         while True:
-            message = socket.recv()
-            if len(message) > 0:
+            messages = socket.recv()
+            if not messages and not socket.connected():
+                events.on_disconnect.send(request, socket, context)
+                break
+            messages = iter(messages)
+            for message in messages:
                 if MESSAGE_LOG_FORMAT is not None:
-                    socket.handler.server.log.write(format_log(request, message))
-
-                # Handle subscribe and unsubscribe requests, then excise
-                # them from the message.
-                to_remove = []
-                for i in range(0, len(message)-1):
-                    if message[i] == "__subscribe__":
-                        socket.subscribe(message[i+1])
-                        events.on_subscribe.send(request, socket, context, message[i+1])
-                        to_remove += [i, i+1]
-                    elif message[i] == "__unsubscribe__":
-                        events.on_unsubscribe.send(request, socket, context, message[i+1])
-                        socket.unsubscribe(message[i+1])
-                        to_remove += [i, i+1]
-                to_remove.reverse()
-                for index in to_remove: message.pop(index)
-
-                if len(message) > 0:
+                    formatted = format_log(request, message)
+                    socket.handler.server.log.write(formatted)
+                if message == "__subscribe__":
+                    chan = messages.next()
+                    socket.subscribe(chan)
+                    events.on_subscribe.send(request, socket, context, chan)
+                elif message == "__unsubscribe__":
+                    chan = messages.next()
+                    socket.unsubscribe(chan)
+                    events.on_unsubscribe.send(request, socket, context, chan)
+                else:
                     events.on_message.send(request, socket, context, message)
-            else:
-                if not socket.connected():
-                    events.on_disconnect.send(request, socket, context)
-                    break
     except Exception, exception:
         print_exc()
         events.on_error.send(request, socket, context, exception)

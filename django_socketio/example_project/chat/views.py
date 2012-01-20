@@ -13,7 +13,6 @@ def message(request, socket, context, message):
     Event handler for a room receiving a message. First validates a
     joining user's name and sends them the list of users.
     """
-    message = message[0]
     room = get_object_or_404(ChatRoom, id=message["room"])
     if message["action"] == "start":
         user, created = room.users.get_or_create(name=strip_tags(message["name"]))
