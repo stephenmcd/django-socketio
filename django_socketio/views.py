@@ -67,5 +67,8 @@ def socketio(request):
         print_exc()
         events.on_error.send(request, socket, context, exception)
     events.on_finish.send(request, socket, context)
+    from django_socketio.channels import CHANNELS
+    for channel in socket.channels:
+        CHANNELS[channel].remove(socket.session.session_id)
     del CLIENTS[socket.session.session_id]
     return HttpResponse("")
