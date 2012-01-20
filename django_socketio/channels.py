@@ -57,7 +57,8 @@ class SocketIOChannelProxy(object):
         for channel in channels:
             for subscriber in CHANNELS[channel]:
                 if subscriber != self.socket.session.session_id:
-                    self._write(message, self.socket.handler.server.sessions[subscriber])
+                    session = self.socket.handler.server.sessions[subscriber]
+                    self._write(message, session)
 
     def send_and_broadcast(self, message):
         """

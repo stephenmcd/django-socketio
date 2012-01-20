@@ -57,12 +57,19 @@ class Event(object):
         socket is not subscribed to any particular channel, or the
         handlers with a channel pattern that matches any of the
         channels that the given socket is subscribed to.
+
+        In the case of subscribe/unsubscribe, match the channel arg
+        being sent to the channel pattern.
         """
         for handler, pattern in self.handlers:
             no_channel = not pattern and not socket.channels
-            matches = [pattern.match(c) for c in socket.channels if pattern]
+            if self.name.endswith("subscribe") and pattern:
+                matches = [pattern.match(args[0])]
+            else:
+                matches = [pattern.match(c) for c in socket.channels if pattern]
             if no_channel or filter(None, matches):
                 handler(request, socket, context, *args)
+
 
 on_connect      = Event(False)  # request, socket, context
 on_message      = Event()       # request, socket, context, message
@@ -74,5 +81,5 @@ on_finish       = Event()       # request, socket, context
 
 # Give each event a name attribute.
 for k, v in globals().items():
-    if isinstance(k, Event):
+    if isinstance(v, Event):
         setattr(v, "name", k)
