@@ -51,6 +51,10 @@ def socketio(request):
             if not messages and not socket.connected():
                 events.on_disconnect.send(request, socket, context)
                 break
+            # Subscribe and unsubscribe messages are in two parts, the
+            # name of either and the channel, so we use an iterator that
+            # lets us jump a step in iteration to grab the channel name
+            # for these.
             messages = iter(messages)
             for message in messages:
                 if MESSAGE_LOG_FORMAT is not None:
@@ -69,9 +73,13 @@ def socketio(request):
     except Exception, exception:
         print_exc()
         events.on_error.send(request, socket, context, exception)
-    events.on_finish.send(request, socket, context)
-    from django_socketio.channels import CHANNELS
+    # Send the unsubscribe event prior to actually unsubscribing, so
+    # that the finish event can still match channels if applicable.
     for channel in socket.channels:
-        CHANNELS[channel].remove(socket.session.session_id)
+        events.on_unsubscribe.send(request, socket, context, channel)
+    events.on_finish.send(request, socket, context)
+    # Actually unsubscribe to cleanup channel data.
+    for channel in socket.channels:
+        socket.unsubscribe(channel)
     del CLIENTS[socket.session.session_id]
     return HttpResponse("")
