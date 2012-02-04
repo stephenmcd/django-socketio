@@ -18,6 +18,20 @@
         io.Socket.prototype[name] = prototype[name];
     }
 
+    // Arrays are transferred as individual messages in Socket.IO,
+    // so we put them into an object and check for the __array__
+    // message on the server to handle them consistently.
+    var send = io.Socket.prototype.send;
+    io.Socket.prototype.send = function(data) {
+        if ($.isArray(data)) {
+            channel =  data[0] == '__subscribe__' || data[0] == '__unsubscribe__';
+            if (!channel) {
+                data = ['__array__', data];
+            }
+        }
+        return send.call(this, data);
+    };
+
     // Set up the subscription methods.
     io.Socket.prototype.subscribe = function(channel) {
         this.send(['__subscribe__', channel]);
