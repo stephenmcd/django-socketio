@@ -24,6 +24,14 @@ The features provided by django-socketio are:
   * The required views, urlpatterns, templatetags and tests for all
     the above
 
+Upgrading
+=========
+
+Prior to version 0.3, the message argument sent to each of the event
+handlers was always a Python list, regardless of the data type that
+was used for sending data. As of 0.3, the message argument matches the
+data type being sent via JavaScript.
+
 Installation
 ============
 
