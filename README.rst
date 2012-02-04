@@ -188,7 +188,9 @@ Events
 The ``django_socketio.events`` module provides a handful of events
 that can be subscribed to, very much like connecting receiver
 functions to Django signals. Each of these events are raised
-throughout the relevant stages of a Socket.IO request.
+throughout the relevant stages of a Socket.IO request. These events
+represent the main approach for implementing your socket handling
+logic when using django-socketio.
 
 Events are subscribed to by applying each event as a decorator
 to your event handler functions::
@@ -198,6 +200,14 @@ to your event handler functions::
     @on_message
     def my_message_handler(request, socket, context, message):
         ...
+
+Where should these event handlers live in your Django project? They
+can go anywhere, so long as they're imported by Django at startup
+time. To ensure that your event handlers are always loaded, you can
+put them into a module called ``events.py`` in one of your apps listed
+in Django's ``INSTALLED_APPS`` setting. django-socketio looks for these
+modules, and will always import them to ensure your event handlers are
+loaded.
 
 Each event handler takes at least three arguments: the current Django
 ``request``, the Socket.IO ``socket`` the event occurred for, and a
