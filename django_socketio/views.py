@@ -57,19 +57,27 @@ def socketio(request):
             # for these.
             messages = iter(messages)
             for message in messages:
-                if MESSAGE_LOG_FORMAT is not None:
-                    formatted = format_log(request, message)
-                    socket.handler.server.log.write(formatted)
                 if message == "__subscribe__":
                     chan = messages.next()
                     socket.subscribe(chan)
                     events.on_subscribe.send(request, socket, context, chan)
+                    message = "[subscribe] %s" % chan
                 elif message == "__unsubscribe__":
                     chan = messages.next()
                     socket.unsubscribe(chan)
                     events.on_unsubscribe.send(request, socket, context, chan)
+                    message = "[unsubscribe] %s" % chan
                 else:
+                    # Socket.IO transfers arrays as individual messages, so
+                    # they're put into an object in socketio_scripts.html
+                    # and given the __array__ key so that they can be treated
+                    # consistently here.
+                    if message == "__array__":
+                        message = messages.next()
                     events.on_message.send(request, socket, context, message)
+                if MESSAGE_LOG_FORMAT is not None:
+                    formatted = format_log(request, message)
+                    socket.handler.server.log.write(formatted)
     except Exception, exception:
         print_exc()
         events.on_error.send(request, socket, context, exception)
