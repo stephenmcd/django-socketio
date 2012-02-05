@@ -13,12 +13,14 @@ def rooms(request, template="rooms.html"):
     context = {"rooms": ChatRoom.objects.all()}
     return render(request, template, context)
 
+
 def room(request, slug, template="room.html"):
     """
     Show a room.
     """
     context = {"room": get_object_or_404(ChatRoom, slug=slug)}
     return render(request, template, context)
+
 
 def create(request):
     """
@@ -30,6 +32,7 @@ def create(request):
         room, created = ChatRoom.objects.get_or_create(name=name)
         return redirect(room)
     return redirect(rooms)
+
 
 @user_passes_test(lambda user: user.is_staff)
 def system_message(request, template="system_message.html"):

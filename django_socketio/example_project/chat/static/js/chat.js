@@ -51,14 +51,26 @@ $(function() {
         return false;
     });
 
-    var socket = new io.Socket();
-    socket.connect();
-    socket.on('connect', function() {
-        socket.subscribe('room-' + window.room);
-        showForm();
+    $('#leave').click(function() {
+        location = '/';
     });
 
-    socket.on('message', function(data) {
+    var socket;
+
+    var connected = function() {
+        socket.subscribe('room-' + window.room);
+        if (name) {
+            socket.send({room: window.room, action: 'start', name: name});
+        } else {
+            showForm();
+        }
+    };
+
+    var disconnected = function() {
+        setTimeout(start, 1000);
+    };
+
+    var messaged = function(data) {
         switch (data.action) {
             case 'in-use':
                 alert('Name is in use, please choose another');
@@ -85,10 +97,16 @@ $(function() {
                 addMessage(data);
                 break;
         }
-    });
+    };
 
-    $('#leave').click(function() {
-        location = '/';
-    });
+    var start = function() {
+        socket = new io.Socket();
+        socket.connect();
+        socket.on('connect', connected);
+        socket.on('disconnect', disconnected);
+        socket.on('message', messaged);
+    };
+
+    start();
 
 });
