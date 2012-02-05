@@ -24,13 +24,13 @@ def cleanup():
     for client in CLIENTS.values():
         events.on_finish.send(*client)
 
-def format_log(request, message):
+def format_log(request, message_type, message):
     """
     Formats a log message similar to gevent's pywsgi request logging.
     """
     now = datetime.now().replace(microsecond=0)
-    log = MESSAGE_LOG_FORMAT % dict(request.META, MESSAGE=message, TIME=now)
-    return log + "\n"
+    args = dict(request.META, TYPE=message_type, MESSAGE=message, TIME=now)
+    return (MESSAGE_LOG_FORMAT % args) + "\n"
 
 def socketio(request):
     """
@@ -58,26 +58,27 @@ def socketio(request):
             messages = iter(messages)
             for message in messages:
                 if message == "__subscribe__":
-                    chan = messages.next()
-                    socket.subscribe(chan)
-                    events.on_subscribe.send(request, socket, context, chan)
-                    message = "[subscribe] %s" % chan
+                    message = messages.next()
+                    message_type = "subscribe"
+                    socket.subscribe(message)
+                    events.on_subscribe.send(request, socket, context, message)
                 elif message == "__unsubscribe__":
-                    chan = messages.next()
-                    socket.unsubscribe(chan)
-                    events.on_unsubscribe.send(request, socket, context, chan)
-                    message = "[unsubscribe] %s" % chan
+                    message = messages.next()
+                    message_type = "unsubscribe"
+                    socket.unsubscribe(message)
+                    events.on_unsubscribe.send(request, socket, context, message)
                 else:
-                    # Socket.IO transfers arrays as individual messages, so
+                    # Socket.IO sends arrays as individual messages, so
                     # they're put into an object in socketio_scripts.html
-                    # and given the __array__ key so that they can be treated
-                    # consistently here.
+                    # and given the __array__ key so that they can be
+                    # handled consistently in the on_message event.
+                    message_type = "message"
                     if message == "__array__":
                         message = messages.next()
                     events.on_message.send(request, socket, context, message)
                 if MESSAGE_LOG_FORMAT is not None:
-                    formatted = format_log(request, message)
-                    socket.handler.server.log.write(formatted)
+                    log_message = format_log(request, message_type, message)
+                    socket.handler.server.log.write(log_message)
     except Exception, exception:
         print_exc()
         events.on_error.send(request, socket, context, exception)
