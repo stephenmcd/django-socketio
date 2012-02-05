@@ -5,6 +5,7 @@ from django_socketio import events
 
 from chat.models import ChatRoom
 
+
 @events.on_message(channel="^room-")
 def message(request, socket, context, message):
     """
@@ -34,6 +35,7 @@ def message(request, socket, context, message):
             message["message"] = strip_tags(message["message"])
             message["name"] = user.name
             socket.send_and_broadcast_channel(message)
+
 
 @events.on_finish(channel="^room-")
 def finish(request, socket, context):

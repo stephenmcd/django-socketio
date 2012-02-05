@@ -1,22 +1,11 @@
 
-from datetime import datetime
-from traceback import print_exc
-
 from django.http import HttpResponse
 
 from django_socketio import events
 from django_socketio.channels import SocketIOChannelProxy
 from django_socketio.clients import client_start, client_end
-from django_socketio.settings import MESSAGE_LOG_FORMAT
+from django_socketio.utils import format_log
 
-
-def format_log(request, message_type, message):
-    """
-    Formats a log message similar to gevent's pywsgi request logging.
-    """
-    now = datetime.now().replace(microsecond=0)
-    args = dict(request.META, TYPE=message_type, MESSAGE=message, TIME=now)
-    return (MESSAGE_LOG_FORMAT % args) + "\n"
 
 def socketio(request):
     """
@@ -62,10 +51,11 @@ def socketio(request):
                     if message == "__array__":
                         message = messages.next()
                     events.on_message.send(request, socket, context, message)
-                if MESSAGE_LOG_FORMAT is not None:
-                    log_message = format_log(request, message_type, message)
+                log_message = format_log(request, message_type, message)
+                if log_message:
                     socket.handler.server.log.write(log_message)
     except Exception, exception:
+        from traceback import print_exc
         print_exc()
         events.on_error.send(request, socket, context, exception)
     client_end(request, socket, context)

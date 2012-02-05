@@ -3,7 +3,8 @@ $(function() {
     var name, started = false;
 
     var addItem = function(selector, item) {
-        $(selector).find('script[type="text/x-jquery-tmpl"]').tmpl(item).appendTo(selector);
+        var template = $(selector).find('script[type="text/x-jquery-tmpl"]');
+        template.tmpl(item).appendTo(selector);
     };
 
     var addUser = function(data, show) {
@@ -40,10 +41,11 @@ $(function() {
         if (value) {
             if (!started) {
                 name = value;
-                socket.send({room: window.room, action: 'start', name: name});
+                data = {room: window.room, action: 'start', name: name};
             } else {
-                socket.send({room: window.room, action: 'message', message: value});
+                data = {room: window.room, action: 'message', message: value};
             }
+            socket.send(data);
         }
         $('#message').val('').focus();
         return false;
