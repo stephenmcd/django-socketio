@@ -3,7 +3,6 @@ from datetime import datetime
 
 from django_socketio.channels import CHANNELS
 from django_socketio.clients import CLIENTS
-from django_socketio.settings import MESSAGE_LOG_FORMAT
 
 
 class NoSocket(Exception):
@@ -51,6 +50,7 @@ def format_log(request, message_type, message):
     """
     Formats a log message similar to gevent's pywsgi request logging.
     """
+    from django_socketio.settings import MESSAGE_LOG_FORMAT
     if MESSAGE_LOG_FORMAT is None:
         return None
     now = datetime.now().replace(microsecond=0)
