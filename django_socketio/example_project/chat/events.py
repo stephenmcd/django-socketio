@@ -6,10 +6,6 @@ from django_socketio import events
 from chat.models import ChatRoom
 
 
-@events.on_subscribe
-def message(request, socket, context, channel):
-    print "subscribed to " + channel
-
 @events.on_message(channel="^room-")
 def message(request, socket, context, message):
     """
