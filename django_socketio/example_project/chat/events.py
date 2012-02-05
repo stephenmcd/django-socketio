@@ -5,7 +5,6 @@ from django_socketio import events
 
 from chat.models import ChatRoom
 
-
 @events.on_message(channel="^room-")
 def message(request, socket, context, message):
     """
@@ -14,7 +13,8 @@ def message(request, socket, context, message):
     """
     room = get_object_or_404(ChatRoom, id=message["room"])
     if message["action"] == "start":
-        user, created = room.users.get_or_create(name=strip_tags(message["name"]))
+        name = strip_tags(message["name"])
+        user, created = room.users.get_or_create(name=name)
         if not created:
             socket.send({"action": "in-use"})
         else:
@@ -45,5 +45,6 @@ def finish(request, socket, context):
         user = context["user"]
     except KeyError:
         return
-    socket.broadcast_channel({"action": "leave", "name": user.name, "id": user.id})
+    left = {"action": "leave", "name": user.name, "id": user.id}
+    socket.broadcast_channel(left)
     user.delete()

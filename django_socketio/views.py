@@ -1,5 +1,4 @@
 
-from atexit import register
 from datetime import datetime
 from traceback import print_exc
 
@@ -7,22 +6,9 @@ from django.http import HttpResponse
 
 from django_socketio import events
 from django_socketio.channels import SocketIOChannelProxy
+from django_socketio.clients import client_start, client_end
 from django_socketio.settings import MESSAGE_LOG_FORMAT
 
-
-# Maps open Socket.IO session IDs to request/socket pairs for
-# guaranteeing the on_finish signal being sent when the server
-# stops.
-CLIENTS = {}
-
-@register
-def cleanup():
-    """
-    Sends the on_finish signal to any open clients when the server
-    is unexpectedly stopped.
-    """
-    for client in CLIENTS.values():
-        events.on_finish.send(*client)
 
 def format_log(request, message_type, message):
     """
@@ -42,7 +28,7 @@ def socketio(request):
     """
     context = {}
     socket = SocketIOChannelProxy(request.environ["socketio"])
-    CLIENTS[socket.session.session_id] = (request, socket, context)
+    client_start(request, socket, context)
     try:
         if socket.on_connect():
             events.on_connect.send(request, socket, context)
@@ -82,13 +68,5 @@ def socketio(request):
     except Exception, exception:
         print_exc()
         events.on_error.send(request, socket, context, exception)
-    # Send the unsubscribe event prior to actually unsubscribing, so
-    # that the finish event can still match channels if applicable.
-    for channel in socket.channels:
-        events.on_unsubscribe.send(request, socket, context, channel)
-    events.on_finish.send(request, socket, context)
-    # Actually unsubscribe to cleanup channel data.
-    for channel in socket.channels:
-        socket.unsubscribe(channel)
-    del CLIENTS[socket.session.session_id]
+    client_end(request, socket, context)
     return HttpResponse("")
