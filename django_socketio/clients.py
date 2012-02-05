@@ -1,6 +1,4 @@
 
-from atexit import register
-
 from django_socketio import events
 
 
@@ -36,11 +34,12 @@ def client_end(request, socket, context):
     del CLIENTS[socket.session.session_id]
 
 
-@register
 def client_end_all():
     """
-    Performs cleanup on all clients - called when the server is shut
-    down (via atexit.register) or reloaded (via runserver_socketio).
+    Performs cleanup on all clients - called by runserver_socketio
+    when the server is shut down or reloaded.
     """
     for request, socket, context in list(CLIENTS.values()):
         client_end(request, socket, context)
+
+

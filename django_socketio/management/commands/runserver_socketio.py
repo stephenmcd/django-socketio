@@ -57,8 +57,8 @@ class Command(BaseCommand):
             server = SocketIOServer(bind, handler, resource="socket.io")
             server.serve_forever()
         except KeyboardInterrupt:
+            client_end_all()
             if RELOAD:
-                client_end_all()
                 server.kill()
                 print
                 print "Reloading..."

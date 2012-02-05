@@ -50,4 +50,3 @@ def finish(request, socket, context):
     left = {"action": "leave", "name": user.name, "id": user.id}
     socket.broadcast_channel(left)
     user.delete()
-
