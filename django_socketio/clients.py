@@ -28,7 +28,7 @@ def client_end(request, socket, context):
         events.on_unsubscribe.send(request, socket, context, channel)
     events.on_finish.send(request, socket, context)
     # Actually unsubscribe to cleanup channel data.
-    for channel in socket.channels:
+    for channel in socket.channels[:]:
         socket.unsubscribe(channel)
     # Remove the client.
     del CLIENTS[socket.session.session_id]
@@ -39,7 +39,7 @@ def client_end_all():
     Performs cleanup on all clients - called by runserver_socketio
     when the server is shut down or reloaded.
     """
-    for request, socket, context in list(CLIENTS.values()):
+    for request, socket, context in CLIENTS.values()[:]:
         client_end(request, socket, context)
 
 
