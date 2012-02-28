@@ -1,3 +1,5 @@
+.. image:: https://secure.travis-ci.org/stephenmcd/django-socketio.png?branch=master
+
 Introduction
 ============
 
