@@ -3,5 +3,6 @@ python:
   - "2.5"
   - "2.6"
   - "2.7"
+before_script: sudo apt-get install python-dev libevent-dev
 install: pip install . --use-mirrors
 script: ./django_socketio/example_project/manage.py test
