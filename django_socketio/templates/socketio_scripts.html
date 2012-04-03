@@ -23,7 +23,7 @@
     // message on the server to handle them consistently.
     var send = io.Socket.prototype.send;
     io.Socket.prototype.send = function(data) {
-        if ($.isArray(data)) {
+        if (data.constructor == Array) {
             channel =  data[0] == '__subscribe__' || data[0] == '__unsubscribe__';
             if (!channel) {
                 data = ['__array__', data];
