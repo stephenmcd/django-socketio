@@ -1,5 +1,21 @@
 .. image:: https://secure.travis-ci.org/stephenmcd/django-socketio.png?branch=master
 
+State of django-socketio
+========================
+
+django-socketio is currently bound to socket.io 0.6, which is considerably 
+out of date. It's fully functional, but some browsers now have newer 
+implentations of WebSockets, and so alternative socket.io transports are
+fallen back to in these cases.
+
+Work is currently underway to bring django-socketio up to date with the 
+latest gevent-socktio, which has just recently started to support 
+socket.io 0.8
+
+Follow this thread for more info:
+
+https://github.com/stephenmcd/django-socketio/issues/19
+
 Introduction
 ============
 
