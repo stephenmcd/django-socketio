@@ -17,7 +17,16 @@ this.io = {
 	}
 };
 
-if ('jQuery' in this) jQuery.io = this.io;
+try {
+  if ('jQuery' in this)
+    jQuery.io = this.io;
+} catch (e) {
+  try {
+    if ('django' in this && 'jQuery' in django)
+      django.jQuery.io = this.io;
+  } catch (e) {
+  }
+}
 
 if (typeof window != 'undefined'){
   // WEB_SOCKET_SWF_LOCATION = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//cdn.socket.io/' + this.io.version + '/WebSocketMain.swf';
