@@ -185,9 +185,9 @@ The remaning methods are implemented by django-socketio.
     socket is subscribed to are used.
     the socket.
   * ``socket.send_and_broadcast(message)`` - Shortcut that sends the
-    message to all sockects, including the sender.
+    message to all sockets, including the sender.
   * ``socket.send_and_broadcast_channel(message, channel=None)``
-    - Shortcut that sends the message to all sockects for the given
+    - Shortcut that sends the message to all sockets for the given
     channel, including the sender.
 
 The following methods can be imported directly from
