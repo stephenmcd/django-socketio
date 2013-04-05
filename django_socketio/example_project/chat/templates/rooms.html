@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load url from future %}
+
 {% block extra_js %}
 <script>$(showForm);</script>
 {% endblock %}
@@ -21,7 +23,7 @@
 {% endblock %}
 
 {% block form %}
-<form method="post" action="{% url create %}">
+<form method="post" action="{% url "create" %}">
     <input type="text" id="name" name="name">
     <input type="submit" id="submit" value="Add Room">
     {% csrf_token %}

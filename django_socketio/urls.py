@@ -1,5 +1,5 @@
 
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from django.conf import settings
 from django.utils.importlib import import_module
 
