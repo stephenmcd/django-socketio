@@ -70,14 +70,10 @@ or on OSX using `Homebrew`_ (with Xcode installed)::
     $ export CFLAGS=-I/brew/include
 
 The easiest way to install django-socketio is directly from PyPi using
-`pip`_ or `setuptools`_ by running the respective command below, which
-will also attempt to install the dependencies mentioned above::
+`pip`_ by running the following command, which will also attempt to
+install the dependencies mentioned above::
 
     $ pip install -U django-socketio
-
-or::
-
-    $ easy_install -U django-socketio
 
 Otherwise you can download django-socketio and install it directly
 from source::
@@ -132,6 +128,10 @@ precedence.
     This isn't strictly required for everything to work correctly, as
     the ``flashsocket`` transport is only used as one of several
     fallbacks when WebSockets aren't supported by the browser.
+
+When running the ``runserver_socketio`` command in production, you'll
+most likely want to use some form of process manager, like
+`Supervisor`_ or any of the other alternatives.
 
 Channels
 ========
@@ -339,6 +339,6 @@ higher is required for the demo as it makes use of Django 1.3's
 .. _`signals`: https://docs.djangoproject.com/en/dev/topics/signals/
 .. _`Homebrew`: http://mxcl.github.com/homebrew/
 .. _`pip`: http://www.pip-installer.org/
-.. _`setuptools`: http://pypi.python.org/pypi/setuptools
+.. _`Supervisor`: http://supervisord.org/
 .. _`Flash Policy Server`: http://www.adobe.com/devnet/flashplayer/articles/socket_policy_files.html
 .. _`low port`: http://www.staldal.nu/tech/2007/10/31/why-can-only-root-listen-to-ports-below-1024/
