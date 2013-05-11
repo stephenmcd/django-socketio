@@ -69,6 +69,10 @@ or on OSX using `Homebrew`_ (with Xcode installed)::
     $ brew install libevent
     $ export CFLAGS=-I/brew/include
 
+or on OSX using `macports`
+    $ sudo port install libevent
+    $ CFLAGS="-I /opt/local/include -L /opt/local/lib" pip install django-socketio
+
 The easiest way to install django-socketio is directly from PyPi using
 `pip`_ by running the following command, which will also attempt to
 install the dependencies mentioned above::
