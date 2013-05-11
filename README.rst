@@ -69,7 +69,8 @@ or on OSX using `Homebrew`_ (with Xcode installed)::
     $ brew install libevent
     $ export CFLAGS=-I/brew/include
 
-or on OSX using `macports`
+or on OSX using `macports`::
+
     $ sudo port install libevent
     $ CFLAGS="-I /opt/local/include -L /opt/local/lib" pip install django-socketio
 
