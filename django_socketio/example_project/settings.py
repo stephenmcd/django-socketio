@@ -1,6 +1,9 @@
 
 import os, sys
+
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIR = PROJECT_ROOT.split(os.sep)[-1]
+
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 full_path = lambda *parts: os.path.join(PROJECT_ROOT, *parts)
@@ -36,7 +39,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 STATIC_URL = "/static/"
-ROOT_URLCONF = "urls"
+ROOT_URLCONF = "%s.urls" % PROJECT_DIR
 TEMPLATE_DIRS = full_path("templates")
 #LOGIN_URL = "/admin/"
 
@@ -49,3 +52,4 @@ INSTALLED_APPS = (
     'django_socketio',
     'chat',
 )
+
