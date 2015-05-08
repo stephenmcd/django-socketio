@@ -40,7 +40,7 @@ MIDDLEWARE_CLASSES = (
 
 STATIC_URL = "/static/"
 ROOT_URLCONF = "%s.urls" % PROJECT_DIR
-TEMPLATE_DIRS = full_path("templates")
+TEMPLATE_DIRS = list(full_path("templates"))
 #LOGIN_URL = "/admin/"
 
 INSTALLED_APPS = (
