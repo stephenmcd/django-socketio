@@ -41,7 +41,7 @@ def broadcast_channel(message, channel):
     """
     try:
         socket = CLIENTS[CHANNELS.get(channel, [])[0]][1]
-    except IndexError, KeyError:
+    except (IndexError, KeyError):
         raise NoSocket("There are no clients on the channel: " + channel)
     socket.send_and_broadcast_channel(message, channel)
 
