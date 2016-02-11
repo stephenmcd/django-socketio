@@ -88,9 +88,9 @@ from source::
 Once installed you can then add ``django_socketio`` to your
 ``INSTALLED_APPS`` and ``django_socketio.urls`` to your url conf::
 
-    urlpatterns = patterns('',
+    urlpatterns += [
         url("", include('django_socketio.urls')),
-    )
+    ]
 
 The client-side JavaScripts for Socket.IO and its extensions can then
 be added to any page with the ``socketio`` templatetag::
