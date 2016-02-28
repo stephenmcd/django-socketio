@@ -46,7 +46,7 @@ class Event(object):
             if not self.supports_channels:
                 raise EventError("The %s event does not support channels so "
                                  "the handler `%s` could not be registered" %
-                                 self.name, handler.__name__)
+                                 (self.name, handler.__name__))
             channel = re.compile(channel)
         self.handlers.append((handler, channel))
 
