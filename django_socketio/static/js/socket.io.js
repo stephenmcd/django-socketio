@@ -512,7 +512,11 @@ if (typeof window != 'undefined'){
 	HTMLFile.prototype._get = function(){
 		var self = this;
 		this._open();
-		window.attachEvent('onunload', function(){ self._destroy(); });
+	  if ('attachEvent' in window){
+		  window.attachEvent('onunload', function(){ self._destroy(); });
+		} else {
+			window.addEventListener('load', function(){ self._destroy(); }, false);
+		}
 	};
 
 	HTMLFile.prototype._open = function(){
