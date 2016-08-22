@@ -80,7 +80,6 @@ on_disconnect   = Event()       # request, socket, context
 on_finish       = Event()       # request, socket, context
 
 # Give each event a name attribute.
-
 d = dict(globals())
 for k, v in d.items():
     if isinstance(v, Event):
