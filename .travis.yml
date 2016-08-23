@@ -2,5 +2,5 @@ language: python
 python:
   - "2.7"
 before_install: "sudo apt-get install python-dev libevent-dev"
-install: pip install . --use-mirrors
+install: pip install .
 script: ./django_socketio/example_project/manage.py test
