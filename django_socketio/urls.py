@@ -1,5 +1,5 @@
-from django.conf.urls import patterns, url
-
+from django.conf.urls import url
+from . import views
 from django.conf import settings
 try:
     # Django < 1.9
@@ -18,6 +18,6 @@ for app in settings.INSTALLED_APPS:
         pass
 
 
-urlpatterns = patterns("django_socketio.views",
-    url("^socket\.io", "socketio", name="socketio"),
-)
+urlpatterns = [
+    url("^socket\.io", views.socketio, name="socketio"),
+]
