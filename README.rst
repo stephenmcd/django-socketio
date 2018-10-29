@@ -8,7 +8,7 @@ State of django-socketio
 
 django-socketio is currently bound to socket.io 0.6, which is considerably
 out of date. It's fully functional, but some browsers now have newer
-implentations of WebSockets, and so alternative socket.io transports are
+implementations of WebSockets, and so alternative socket.io transports are
 fallen back to in these cases.
 
 Work is currently underway to bring django-socketio up to date with the
