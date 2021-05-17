@@ -54,7 +54,7 @@ def socketio(request):
                 log_message = format_log(request, message_type, message)
                 if log_message:
                     socket.handler.server.log.write(log_message)
-    except Exception, exception:
+    except Exception as exception:
         from traceback import print_exc
         print_exc()
         events.on_error.send(request, socket, context, exception)
